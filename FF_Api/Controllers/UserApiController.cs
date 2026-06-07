@@ -1,30 +1,43 @@
 using FF_Business;
-using FF_ModelsDB.Models;
-using Microsoft.AspNetCore.Http;
+using FF_Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FF_Api.Controllers
+namespace FF_Api.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+public class UserApiController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class UserApiController : ControllerBase
+    private readonly IUserBusiness _userBusiness;
+
+    public UserApiController(IUserBusiness userBusiness)
     {
-        private readonly IUserBusiness _userBusiness;
+        _userBusiness = userBusiness;
+    }
 
-        // CONCTRUCTOR
-        public UserApiController(IUserBusiness userBusiness)
+    // POST: /UserApi/register
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterViewModel dto)
+    {
+        try
         {
-            _userBusiness = userBusiness;
+            var result = await _userBusiness.RegisterAsync(dto.Username, dto.Email, dto.Password);
+            if (!result) return BadRequest("No se pudo crear el usuario.");
+            return Ok("Usuario registrado correctamente.");
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-        // LLAMADOS
-        
-        // POST:
-        [HttpPost(Name = "CreateUser")]
-        public Task<bool> Create(User user)
-        {
-            var creatingUser = _userBusiness.CreateUserAsync(user);
-            return creatingUser;
-        }
+    // POST: /UserApi/login
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginViewModel dto)
+    {
+        var token = await _userBusiness.LoginAsync(dto.Email, dto.Password);
+        if (token == null) return Unauthorized("Credenciales incorrectas.");
+
+        return Ok(new { token });
     }
 }

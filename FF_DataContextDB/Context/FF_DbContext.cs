@@ -25,7 +25,7 @@ public partial class FF_DbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("");
+        => optionsBuilder.UseSqlServer("Server=KokarPCDesk13;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

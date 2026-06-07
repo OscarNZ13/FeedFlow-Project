@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FF_Repositories\FF_Repositories.csproj" />
+  </ItemGroup>
+
 </Project>

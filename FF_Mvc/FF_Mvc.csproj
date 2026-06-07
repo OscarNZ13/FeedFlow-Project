@@ -19,4 +19,13 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Auth\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\Auth_Style.css" />
+    <None Include="wwwroot\js\Auth_Script.js" />
+  </ItemGroup>
+
 </Project>

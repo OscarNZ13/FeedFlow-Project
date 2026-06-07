@@ -1,0 +1,66 @@
+﻿@model FF_Mvc.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Registro";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro - FeedFlow</title>
+    <link rel="stylesheet" href="~/css/auth.css" />
+</head>
+<body>
+<div class="ff-card">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Tu fuente de noticias</div>
+    </div>
+
+    <div class="ff-divider"> 
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Crear cuenta</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="ff-error">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p style="margin:0">@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <form asp-action="Register" method="post">
+        <label class="ff-label" asp-for="Username">Usuario</label>
+        <input class="ff-input" asp-for="Username" type="text" placeholder="tunombre" />
+
+        <label class="ff-label" asp-for="Email">Email</label>
+        <input class="ff-input" asp-for="Email" type="email" placeholder="tucorreo@email.com" />
+
+        <label class="ff-label" asp-for="Password">Contraseña</label>
+        <div class="ff-input-wrapper">
+            <input class="ff-input" asp-for="Password" type="password" placeholder="••••••••" id="passwordInput" />
+            <span class="ff-eye" onclick="togglePassword()">👁</span>
+        </div>
+
+        <button class="ff-btn" type="submit">Registrarse</button>
+    </form>
+
+    <div class="ff-footer">
+        ¿Ya tenés cuenta? <a asp-action="Login">Iniciá sesión</a>
+    </div>
+</div>
+<script>
+    function togglePassword() {
+        const input = document.getElementById('passwordInput');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>
+</body>
+</html>

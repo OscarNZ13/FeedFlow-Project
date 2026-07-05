@@ -25,7 +25,11 @@ public partial class FF_DbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=LAPTOP-QIN0I11O\\SQLEXPRESS;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
+<<<<<<< Updated upstream
+        => optionsBuilder.UseSqlServer("");
+=======
+        => optionsBuilder.UseSqlServer("");
+>>>>>>> Stashed changes
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

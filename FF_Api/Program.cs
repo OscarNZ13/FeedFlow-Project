@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // ← antes de Authorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

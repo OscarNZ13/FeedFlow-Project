@@ -8,7 +8,7 @@ namespace FF_Mvc.Controllers;
 public class AccountController : Controller
 {
     private readonly HttpClient _httpClient;
-    private const string ApiBaseUrl = "";
+    private const string ApiBaseUrl = "https://localhost:7283/UserApi";
 
     public AccountController()
     {

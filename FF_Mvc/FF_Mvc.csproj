@@ -23,4 +23,8 @@
     <None Include="wwwroot\js\Auth_Script.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
+  </ItemGroup>
+
 </Project>

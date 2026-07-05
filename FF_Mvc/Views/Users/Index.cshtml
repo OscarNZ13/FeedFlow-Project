@@ -1,0 +1,50 @@
+﻿<link rel="stylesheet" href="~/css/dashboard.css" />
+
+@model IEnumerable<FF_Mvc.ViewModels.UserViewModel>
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<div class="ff-card">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Administración de usuarios</div>
+    </div>
+
+    <div class="ff-divider">
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Listado de usuarios</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    <a asp-action="Create" class="ff-btn">Crear Usuario</a>
+
+    <table class="ff-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Username</td>
+                    <td>@user.Email</td>
+                    <td>@(user.RoleId == 1 ? "Administrador" : "Usuario")</td>
+                    <td>
+                        <a asp-action="EditInfo" asp-route-id="@user.Id" class="ff-btn">Editar</a>
+                        <a asp-action="EditPassword" asp-route-id="@user.Id" class="ff-btn">Contraseña</a>
+                        <a asp-action="Delete" asp-route-id="@user.Id" class="ff-btn ff-btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

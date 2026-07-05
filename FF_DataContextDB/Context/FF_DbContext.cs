@@ -25,11 +25,7 @@ public partial class FF_DbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-<<<<<<< Updated upstream
         => optionsBuilder.UseSqlServer("");
-=======
-        => optionsBuilder.UseSqlServer("");
->>>>>>> Stashed changes
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

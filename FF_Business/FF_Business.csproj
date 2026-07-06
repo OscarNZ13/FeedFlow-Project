@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FF_Architecture\FF.Architecture.csproj" />
     <ProjectReference Include="..\FF_Repositories\FF_Repositories.csproj" />
   </ItemGroup>
 

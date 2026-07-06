@@ -17,6 +17,12 @@ builder.Services.AddDbContext<FF_DbContext>();
 // Registrar dependencias
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserBusiness, UserBusiness>();
+builder.Services.AddScoped<ISourceItemRepository, SourceItemRepository>();
+builder.Services.AddScoped<ISourceItemBusiness, SourceItemBusiness>();
+builder.Services.AddScoped<ISourceRepository, SourceRepository>();
+builder.Services.AddScoped<ISourceBusiness, SourceBusiness>();
+builder.Services.AddScoped<IImportExportBusiness, ImportExportBusiness>();
+
 
 // Configurar JWT
 var jwtKey = builder.Configuration["Jwt:Key"]!;

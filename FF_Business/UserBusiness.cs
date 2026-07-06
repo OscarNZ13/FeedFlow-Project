@@ -155,7 +155,7 @@ public class UserBusiness(IUserRepository userRepository, IConfiguration configu
             Username = username,
             Email = email,
             PasswordHash = hashedPassword,
-            RoleId = 1,
+            RoleId = 2,
             CreatedAt = DateTime.UtcNow
         };
 

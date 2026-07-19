@@ -1,4 +1,5 @@
 ﻿using FF_Mvc.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
@@ -209,6 +210,31 @@ public class UsersController : Controller
     }
 
 
-    
+    public IActionResult ChangePassword()
+    {
+        return View(new ChangePasswordViewModel());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        AddJwt(); // agrega el token al header
+
+        var json = JsonSerializer.Serialize(model);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/users/change-password", content);
+
+        if (response.IsSuccessStatusCode)
+            return RedirectToAction("Index");
+
+        var error = await response.Content.ReadAsStringAsync();
+        ModelState.AddModelError("", error);
+        return View(model);
+    }
+
+
 }
 

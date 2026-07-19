@@ -206,4 +206,24 @@ public class UserApiController : ControllerBase
 
         return Ok(new { token });
     }
+
+    [Authorize]
+    [HttpPut("users/change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        //Identificar el id del usuario logueado
+        var claim = User.FindFirst("id");
+        if (claim == null)
+            return Unauthorized("No se pudo identificar al usuario actual.");
+
+        var currentUserId = int.Parse(claim.Value);
+
+        var result = await _userBusiness.UpdatePasswordAsync(currentUserId, dto.NewPassword);
+        return result ? Ok("Contraseña actualizada.") : StatusCode(500, "Error al actualizar contraseña.");
+    }
+
+
 }

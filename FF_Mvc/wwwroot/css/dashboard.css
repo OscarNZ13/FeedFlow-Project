@@ -136,7 +136,23 @@
         background-color: #777;
     }
 
-/* Etiquetas y texto en blanco */
-.ff-label, .ff-text, .ff-dl dt, .ff-dl dd {
-    color: #fff;
+/* Icono de usuario en blanco */
+.navbar .user-icon {
+    color: #fff !important;
+    font-size: 1.5rem;
 }
+
+/* Dropdown oscuro */
+.navbar .dropdown-menu.custom-dropdown {
+    background-color: #000 !important;
+    border: 1px solid #444;
+}
+
+    .navbar .dropdown-menu.custom-dropdown .dropdown-item {
+        color: #fff !important;
+    }
+
+        .navbar .dropdown-menu.custom-dropdown .dropdown-item:hover {
+            background-color: #333 !important;
+            color: #fff !important;
+        }

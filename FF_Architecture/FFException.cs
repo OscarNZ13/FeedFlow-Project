@@ -1,6 +1,4 @@
-﻿/// <summary>
-/// Custom exception class for PAW-specific exceptions.
-/// </summary>
+﻿
 public class APWException : Exception
 {
     private readonly Exception exception;

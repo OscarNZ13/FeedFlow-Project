@@ -22,6 +22,7 @@
   <!-- NUEVO -->
   <ItemGroup>
     <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
+  <ItemGroup>
     <ProjectReference Include="..\FF_DataContextDB\FF_DataDB.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="FF_Api/FF_Api.csproj" />
   <Project Path="FF_Architecture/FF.Architecture.csproj" />
+  <Project Path="FF_Business/FF_Business.csproj" Id="818c8808-ca8c-48bd-8745-663c3d985aad" />
   <Project Path="FF_DataContextDB/FF_DataDB.csproj" Id="2b582b30-25a5-47cc-b65c-c72619ec4aaf" />
   <Project Path="FF_ModelsDB/FF_ModelsDB.csproj" Id="f9f335cd-1aa2-4eed-b2b9-58169c58c007" />
   <Project Path="FF_Mvc/FF_Mvc.csproj" />

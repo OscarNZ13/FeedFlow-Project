@@ -1,0 +1,158 @@
+﻿/* Navbar oscuro */
+.navbar {
+    background-color: #1e1e1e !important;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #444;
+}
+
+    .navbar a, .navbar-brand {
+        color: #fff !important;
+        margin-right: 1rem;
+        text-decoration: none;
+    }
+
+        .navbar a:hover {
+            color: #d4a017 !important;
+        }
+
+/* Contenedor */
+.ff-card {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+}
+
+/* Masthead */
+.ff-masthead-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.ff-masthead-sub {
+    font-size: 1rem;
+    color: #aaa;
+}
+
+/* Divider */
+.ff-divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+}
+
+.ff-divider-line {
+    flex: 1;
+    height: 1px;
+    background-color: #444;
+}
+
+.ff-divider-text {
+    margin: 0 0.5rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Botones */
+.ff-btn {
+    padding: 0.4rem 0.8rem;
+    margin-right: 0.3rem;
+    text-decoration: none;
+    border-radius: 4px;
+    background-color: #444;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.ff-btn-warning {
+    background-color: #d4a017;
+}
+
+.ff-btn-danger {
+    background-color: #c0392b;
+}
+
+/* Tabla */
+.ff-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #1e1e1e;
+    color: #fff;
+}
+
+    .ff-table th, .ff-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #444;
+    }
+
+    .ff-table th {
+        background-color: #222;
+        font-weight: bold;
+    }
+
+    .ff-table tr:nth-child(even) {
+        background-color: #2a2a2a;
+    }
+
+    .ff-table tr:hover {
+        background-color: #333;
+    }
+
+/* Etiquetas en blanco */
+.ff-label {
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    display: block;
+}
+
+/* Centrado de botones */
+.form-actions {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+/* Botón principal azul oscuro */
+.ff-btn-primary {
+    background-color: #0d47a1; /* azul oscuro */
+    color: #fff;
+}
+
+    .ff-btn-primary:hover {
+        background-color: #1565c0;
+    }
+
+/* Botón secundario gris */
+.ff-btn-secondary {
+    background-color: #555;
+    color: #fff;
+}
+
+    .ff-btn-secondary:hover {
+        background-color: #777;
+    }
+
+/* Icono de usuario en blanco */
+.navbar .user-icon {
+    color: #fff !important;
+    font-size: 1.5rem;
+}
+
+/* Dropdown oscuro */
+.navbar .dropdown-menu.custom-dropdown {
+    background-color: #000 !important;
+    border: 1px solid #444;
+}
+
+    .navbar .dropdown-menu.custom-dropdown .dropdown-item {
+        color: #fff !important;
+    }
+
+        .navbar .dropdown-menu.custom-dropdown .dropdown-item:hover {
+            background-color: #333 !important;
+            color: #fff !important;
+        }

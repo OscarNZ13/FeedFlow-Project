@@ -1,4 +1,5 @@
 using FF_ModelsDB;
+using FF_ModelsDB.Models;
 
 namespace FF_Api.ViewModels;
 
@@ -26,4 +27,17 @@ public class CreateSourceRequest
     public string? SecretKeyName { get; set; }
     public string? SecretKeyValue { get; set; }
     public SecretLocation SecretLocation { get; set; } = SecretLocation.Header;
+}
+
+    public string Url { get; set; } = null!;
+
+    public string Name { get; set; } = null!;
+
+    public string? Description { get; set; }
+
+    public string ComponentType { get; set; } = null!;
+
+    public bool RequiresSecret { get; set; }
+
+    public virtual ICollection<SourceItem> SourceItems { get; set; } = new List<SourceItem>();
 }

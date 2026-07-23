@@ -54,13 +54,13 @@ public partial class FF_DbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Url).HasMaxLength(500);
 
-            // --- Agregado para el módulo de Feed (Mel) ---
+
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.LastFetchedAt).HasColumnType("datetime");
-            // --- fin de lo agregado ---
+
         });
 
         modelBuilder.Entity<SourceItem>(entity =>
@@ -76,7 +76,7 @@ public partial class FF_DbContext : DbContext
                 .HasConstraintName("FK_SourceItems_Sources");
         });
 
-        // --- Agregado para el módulo de Feed (Mel): tabla Secrets/Settings ---
+
         modelBuilder.Entity<SourceSecret>(entity =>
         {
             entity.ToTable("SourceSecrets");
@@ -91,7 +91,6 @@ public partial class FF_DbContext : DbContext
                 .HasForeignKey(e => e.SourceId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
-        // --- fin de lo agregado ---
 
         modelBuilder.Entity<User>(entity =>
         {

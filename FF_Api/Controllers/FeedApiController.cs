@@ -14,8 +14,7 @@ public class FeedApiController(
     ISourceRepository sourceRepository,
     ISourceSecretRepository sourceSecretRepository) : ControllerBase
 {
-    // GET FeedApi/feed?take=10
-    // Endpoint principal: lo que consume la Landing Page / feed de noticias.
+
     [HttpGet("feed")]
     public async Task<ActionResult<IEnumerable<NewsItemDto>>> GetFeed([FromQuery] int take = 10)
     {
@@ -23,7 +22,7 @@ public class FeedApiController(
         return Ok(items);
     }
 
-    // GET FeedApi/sources
+
     [HttpGet("sources")]
     public async Task<ActionResult<IEnumerable<SourceViewModel>>> GetSources()
     {
@@ -31,7 +30,6 @@ public class FeedApiController(
         return Ok(sources.Select(ToViewModel));
     }
 
-    // POST FeedApi/sources  -> lo que usa el formulario "agregar fuente" (solo Admin)
     [HttpPost("sources")]
     public async Task<ActionResult<SourceViewModel>> CreateSource([FromBody] CreateSourceRequest request)
     {
@@ -68,7 +66,6 @@ public class FeedApiController(
         return Ok(ToViewModel(source));
     }
 
-    // GET FeedApi/sources/5/preview?take=10  -> trae y parsea EN VIVO, sin guardar
     [HttpGet("sources/{id:int}/preview")]
     public async Task<ActionResult<IEnumerable<NewsItemDto>>> PreviewSource(int id, [FromQuery] int take = 10)
     {
@@ -83,11 +80,10 @@ public class FeedApiController(
         }
         catch (ApplicationException ex)
         {
-            return StatusCode(502, ex.Message); // fuente externa no respondió / formato inválido
+            return StatusCode(502, ex.Message);
         }
     }
 
-    // POST FeedApi/sources/5/refresh  -> trae, parsea y GUARDA items nuevos en SourceItems
     [HttpPost("sources/{id:int}/refresh")]
     public async Task<ActionResult<IEnumerable<NewsItemDto>>> RefreshSource(int id)
     {

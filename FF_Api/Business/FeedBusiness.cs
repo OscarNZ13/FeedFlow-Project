@@ -8,18 +8,10 @@ namespace FF_Api.Business;
 
 public interface IFeedBusiness
 {
-    /// <summary>Fetches + parses a source live, WITHOUT saving to the DB. Used to preview a feed.</summary>
     Task<IEnumerable<NewsItemDto>> PreviewSourceAsync(int sourceId, int take = 10);
 
-    /// <summary>Fetches + parses a source live, and persists new items into SourceItems.</summary>
     Task<IEnumerable<NewsItemDto>> RefreshSourceAsync(int sourceId);
 
-    /// <summary>
-    /// Main feed endpoint: if there are items saved in the DB, returns those.
-    /// Otherwise falls back to fetching live from every active Source
-    /// (per the assignment: "Si no tiene items guardados, debe mostrar items
-    /// cargados de las fuentes").
-    /// </summary>
     Task<IEnumerable<NewsItemDto>> GetFeedAsync(int take = 10);
 }
 
@@ -84,7 +76,6 @@ public class FeedBusiness(
                 .ToList();
         }
 
-        // No hay nada guardado todavía: traemos en vivo de todas las fuentes activas.
         var sources = await sourceRepository.ReadActiveAsync();
         var results = new List<NewsItemDto>();
 
@@ -100,7 +91,6 @@ public class FeedBusiness(
             }
             catch
             {
-                // Una fuente caída no debe tumbar el feed completo.
             }
         }
 

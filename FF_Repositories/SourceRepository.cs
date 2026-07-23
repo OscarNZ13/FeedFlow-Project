@@ -8,10 +8,8 @@ public interface ISourceRepository : IRepositoryBase<Source>
 {
     Task<Source?> FindByUrlAsync(string url);
 
-    // --- Agregado para el módulo de Feed (Mel) ---
     Task<IEnumerable<Source>> ReadActiveAsync();
     Task<Source?> FindWithSecretsAsync(int id);
-    // --- fin de lo agregado ---
 }
 
 public class SourceRepository(FF_DbContext context)
@@ -23,7 +21,6 @@ public class SourceRepository(FF_DbContext context)
             .FirstOrDefaultAsync(x => x.Url == url);
     }
 
-    // --- Agregado para el módulo de Feed (Mel) ---
     public async Task<IEnumerable<Source>> ReadActiveAsync()
     {
         return await DbContext.Sources.Where(s => s.IsActive).ToListAsync();
@@ -35,5 +32,4 @@ public class SourceRepository(FF_DbContext context)
             .Include(s => s.Secrets)
             .FirstOrDefaultAsync(s => s.Id == id);
     }
-    // --- fin de lo agregado ---
 }

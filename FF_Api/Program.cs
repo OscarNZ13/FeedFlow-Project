@@ -15,34 +15,33 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// --- DB (un solo DbContext para todo el proyecto) ---
 builder.Services.AddDbContext<FF_DbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// --- Repositories ---
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISourceRepository, SourceRepository>();
 builder.Services.AddScoped<ISourceItemRepository, SourceItemRepository>();
 builder.Services.AddScoped<ISourceSecretRepository, SourceSecretRepository>();
 
-// --- Business ---
+
 builder.Services.AddScoped<IUserBusiness, UserBusiness>();
 builder.Services.AddScoped<ISourceBusiness, SourceBusiness>();
 builder.Services.AddScoped<ISourceItemBusiness, SourceItemBusiness>();
 builder.Services.AddScoped<IImportExportBusiness, ImportExportBusiness>();
 
-// --- Feed fetching / parsing (Architecture layer) ---
+
 builder.Services.AddHttpClient<IFeedFetcher, FeedFetcher>();
 builder.Services.AddSingleton<IFeedParserFactory, FeedParserFactory>();
 builder.Services.AddScoped<IFeedBusiness, FeedBusiness>();
 
-// CORS abierto para que FF_Mvc (y la demo) puedan llamar a la Api sin fricción.
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
-// --- JWT ---
+
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;

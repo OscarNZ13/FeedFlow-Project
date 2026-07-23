@@ -14,7 +14,6 @@ public class SourceViewModel
     public DateTime? LastFetchedAt { get; set; }
 }
 
-/// <summary>Payload used by the Admin "agregar fuente" form (URL, Name, Key).</summary>
 public class CreateSourceRequest
 {
     public string Url { get; set; } = string.Empty;
@@ -22,7 +21,6 @@ public class CreateSourceRequest
     public string? Description { get; set; }
     public string ComponentType { get; set; } = "feed";
 
-    /// <summary>Optional: if the source needs an API key/token to be called.</summary>
     public string? SecretKeyName { get; set; }
     public string? SecretKeyValue { get; set; }
     public SecretLocation SecretLocation { get; set; } = SecretLocation.Header;

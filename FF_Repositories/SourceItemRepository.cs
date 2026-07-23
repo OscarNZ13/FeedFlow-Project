@@ -9,11 +9,9 @@ public interface ISourceItemRepository : IRepositoryBase<SourceItem>
     Task<IEnumerable<SourceItem>> FindBySourceIdAsync(int sourceId);
     Task<SourceItem?> FindWithSourceAsync(int id);
 
-    // --- Agregado para el módulo de Feed (Mel) ---
     Task<IEnumerable<SourceItem>> ReadLatestAsync(int take);
     Task<bool> AnyAsync();
     Task<bool> CreateManyAsync(IEnumerable<SourceItem> entities);
-    // --- fin de lo agregado ---
 }
 
 public class SourceItemRepository(FF_DbContext context)
@@ -34,7 +32,6 @@ public class SourceItemRepository(FF_DbContext context)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    // --- Agregado para el módulo de Feed (Mel) ---
     public async Task<IEnumerable<SourceItem>> ReadLatestAsync(int take)
     {
         return await DbContext.SourceItems
@@ -53,5 +50,5 @@ public class SourceItemRepository(FF_DbContext context)
         await DbContext.SourceItems.AddRangeAsync(entities);
         return await SaveAsync();
     }
-    // --- fin de lo agregado ---
+
 }

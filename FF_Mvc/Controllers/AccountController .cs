@@ -1,5 +1,9 @@
 ﻿using FF_Mvc.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
@@ -48,6 +52,16 @@ public class AccountController : Controller
 
         // Guardar token en sesión
         HttpContext.Session.SetString("JwtToken", token!);
+
+        // Decodificar el JWT y crear ClaimsPrincipal
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+
+        var identity = new ClaimsIdentity(jwtToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        // Firmar al usuario en MVC (cookie)
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         return RedirectToAction("Index", "Home");
     }

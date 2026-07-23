@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace FF_ModelsDB.Models;
@@ -16,6 +16,14 @@ public partial class Source
     public string ComponentType { get; set; } = null!;
 
     public bool RequiresSecret { get; set; }
+
+    public bool IsActive { get; set; } = true;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime? LastFetchedAt { get; set; }
+
+    public virtual ICollection<SourceSecret> Secrets { get; set; } = new List<SourceSecret>();
 
     public virtual ICollection<SourceItem> SourceItems { get; set; } = new List<SourceItem>();
 }

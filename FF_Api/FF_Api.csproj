@@ -23,8 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FF_Business\FF_Business.csproj" />
+    <ProjectReference Include="..\FF_Architecture\FF.Architecture.csproj" />
     <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
+    <ProjectReference Include="..\FF_DataContextDB\FF_DataDB.csproj" />
+    <ProjectReference Include="..\FF_Repositories\FF_Repositories.csproj" />
+    <ProjectReference Include="..\FF_Business\FF_Business.csproj" />
   </ItemGroup>
 
 </Project>

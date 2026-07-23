@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FF_ModelsDB.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +22,17 @@ public partial class FF_DbContext : DbContext
 
     public virtual DbSet<SourceItem> SourceItems { get; set; }
 
+    public virtual DbSet<SourceSecret> SourceSecrets { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("");
-
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS02;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Role>(entity =>
@@ -47,6 +53,14 @@ public partial class FF_DbContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Url).HasMaxLength(500);
+
+            // --- Agregado para el módulo de Feed (Mel) ---
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastFetchedAt).HasColumnType("datetime");
+            // --- fin de lo agregado ---
         });
 
         modelBuilder.Entity<SourceItem>(entity =>
@@ -61,6 +75,23 @@ public partial class FF_DbContext : DbContext
                 .HasForeignKey(d => d.SourceId)
                 .HasConstraintName("FK_SourceItems_Sources");
         });
+
+        // --- Agregado para el módulo de Feed (Mel): tabla Secrets/Settings ---
+        modelBuilder.Entity<SourceSecret>(entity =>
+        {
+            entity.ToTable("SourceSecrets");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.KeyName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.KeyValue).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Location).HasConversion<string>().HasMaxLength(20);
+
+            entity.HasOne(e => e.Source)
+                .WithMany(s => s.Secrets)
+                .HasForeignKey(e => e.SourceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        // --- fin de lo agregado ---
 
         modelBuilder.Entity<User>(entity =>
         {

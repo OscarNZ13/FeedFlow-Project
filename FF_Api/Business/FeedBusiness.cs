@@ -1,6 +1,6 @@
 using FF.Architecture.Parsers;
 using FF.Architecture.Providers;
-using FF_ModelsDB;
+using FF_ModelsDB.Models;
 using FF_Repositories;
 using System.Text.Json;
 
@@ -47,7 +47,7 @@ public class FeedBusiness(
 
         var items = (await FetchAndParseAsync(source)).ToList();
 
-        var existingIds = (await sourceItemRepository.ReadBySourceAsync(sourceId))
+        var existingIds = (await sourceItemRepository.FindBySourceIdAsync(sourceId))
             .Select(x => TryGetId(x.Json))
             .Where(id => id != null)
             .ToHashSet();
@@ -77,7 +77,8 @@ public class FeedBusiness(
         {
             var saved = await sourceItemRepository.ReadLatestAsync(take);
             return saved
-                .Select(x => JsonSerializer.Deserialize<NewsItemDto>(x.Json, JsonOptions))
+                .Where(x => !string.IsNullOrWhiteSpace(x.Json))
+                .Select(x => JsonSerializer.Deserialize<NewsItemDto>(x.Json!, JsonOptions))
                 .Where(x => x != null)
                 .Select(x => x!)
                 .ToList();
@@ -135,8 +136,10 @@ public class FeedBusiness(
         return (headers, queryParams);
     }
 
-    private static string? TryGetId(string json)
+    private static string? TryGetId(string? json)
     {
+        if (string.IsNullOrWhiteSpace(json)) return null;
+
         try
         {
             using var doc = JsonDocument.Parse(json);

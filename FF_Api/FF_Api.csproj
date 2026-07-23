@@ -22,15 +22,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
-  <!-- NUEVO: referencias a los proyectos de la capa de Feed -->
   <ItemGroup>
     <ProjectReference Include="..\FF_Architecture\FF.Architecture.csproj" />
     <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
     <ProjectReference Include="..\FF_DataContextDB\FF_DataDB.csproj" />
     <ProjectReference Include="..\FF_Repositories\FF_Repositories.csproj" />
-  <ItemGroup>
     <ProjectReference Include="..\FF_Business\FF_Business.csproj" />
-    <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
   </ItemGroup>
 
 </Project>

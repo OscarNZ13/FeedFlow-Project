@@ -1,47 +1,17 @@
-using FF_DataDB;
-using FF_ModelsDB;
+using FF_DataDB.Context;
+using FF_ModelsDB.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FF_Repositories;
 
 public interface ISourceRepository : IRepositoryBase<Source>
 {
+    Task<Source?> FindByUrlAsync(string url);
+
+    // --- Agregado para el módulo de Feed (Mel) ---
     Task<IEnumerable<Source>> ReadActiveAsync();
     Task<Source?> FindWithSecretsAsync(int id);
-}
-
-public class SourceRepository(FeedFlowDbContext context) : RepositoryBase<Source>(context), ISourceRepository
-{
-    public async Task<IEnumerable<Source>> ReadActiveAsync()
-    {
-        return await Context.Sources.Where(s => s.IsActive).ToListAsync();
-    }
-
-    public async Task<Source?> FindWithSecretsAsync(int id)
-    {
-        return await Context.Sources
-            .Include(s => s.Secrets)
-            .FirstOrDefaultAsync(s => s.Id == id);
-    }
-}
-
-using FF_DataDB.Context;
-using FF_ModelsDB.Models;
-using Microsoft.EntityFrameworkCore;
-
-
-namespace FF_Repositories;
-public interface ISourceRepository
-{
-    Task<bool> UpsertAsync(Source entity, bool isUpdating);
-    Task<bool> CreateAsync(Source entity);
-    Task<bool> DeleteAsync(Source entity);
-    Task<IEnumerable<Source>> ReadAsync();
-    Task<Source> FindAsync(int id);
-    Task<bool> UpdateAsync(Source entity);
-    Task<bool> UpdateManyAsync(IEnumerable<Source> entities);
-    Task<bool> ExistsAsync(Source entity);
-    Task<Source?> FindByUrlAsync(string url);
+    // --- fin de lo agregado ---
 }
 
 public class SourceRepository(FF_DbContext context)
@@ -52,4 +22,18 @@ public class SourceRepository(FF_DbContext context)
         return await DbContext.Sources
             .FirstOrDefaultAsync(x => x.Url == url);
     }
+
+    // --- Agregado para el módulo de Feed (Mel) ---
+    public async Task<IEnumerable<Source>> ReadActiveAsync()
+    {
+        return await DbContext.Sources.Where(s => s.IsActive).ToListAsync();
+    }
+
+    public async Task<Source?> FindWithSecretsAsync(int id)
+    {
+        return await DbContext.Sources
+            .Include(s => s.Secrets)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
+    // --- fin de lo agregado ---
 }

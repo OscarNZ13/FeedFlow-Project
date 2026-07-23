@@ -1,7 +1,7 @@
 using FF.Architecture.Parsers;
 using FF_Api.Business;
 using FF_Api.ViewModels;
-using FF_ModelsDB;
+using FF_ModelsDB.Models;
 using FF_Repositories;
 using Microsoft.AspNetCore.Mvc;
 

@@ -31,7 +31,7 @@ public class TxtFeedParser : IFeedParser
         {
             SourceName = sourceName,
             Id = Guid.NewGuid().ToString("N"),
-            Name = title,
+            Title = title,
             Description = description
         };
     }

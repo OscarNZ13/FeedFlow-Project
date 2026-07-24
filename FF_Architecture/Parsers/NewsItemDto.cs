@@ -12,8 +12,8 @@ public class NewsItemDto
     [JsonPropertyName("id")]
     public string Id { get; set; } = string.Empty;
 
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = string.Empty;
 
     [JsonPropertyName("category")]
     public string? Category { get; set; }
@@ -32,4 +32,5 @@ public class NewsItemDto
 
     [JsonPropertyName("published_at")]
     public DateTime? PublishedAt { get; set; }
+    public int SourceItemId { get; set; }
 }

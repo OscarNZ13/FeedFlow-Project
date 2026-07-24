@@ -15,6 +15,13 @@ namespace FF_Mvc.Controllers
 
         public IActionResult Index()
         {
+            var roleId = User.FindFirst("roleId")?.Value;
+
+            if (roleId != "1")
+            {
+                return RedirectToAction("Index", "Feed");
+            }
+
             return View();
         }
 

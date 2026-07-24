@@ -37,7 +37,7 @@ public class XmlFeedParser : IFeedParser
         {
             SourceName = sourceName,
             Id = GetValue(element, "id", "guid") ?? Guid.NewGuid().ToString("N"),
-            Name = GetValue(element, "title", "name") ?? "(sin título)",
+            Title = GetValue(element, "title", "name") ?? "(sin título)",
             Description = GetValue(element, "description", "summary", "content"),
             Category = GetValue(element, "category", "section"),
             ImageUrl = GetImageValue(element),

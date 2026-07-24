@@ -66,7 +66,7 @@ public class JsonFeedParser : IFeedParser
         {
             SourceName = sourceName,
             Id = GetString(element, IdKeys) ?? Guid.NewGuid().ToString("N"),
-            Name = GetString(element, TitleKeys) ?? "(sin título)",
+            Title = GetString(element, TitleKeys) ?? "(sin título)",
             Description = GetString(element, DescriptionKeys),
             Category = GetString(element, CategoryKeys),
             ImageUrl = GetImageValue(element),

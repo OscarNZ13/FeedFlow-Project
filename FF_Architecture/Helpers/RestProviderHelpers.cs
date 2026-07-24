@@ -35,16 +35,38 @@ internal static class RestProviderHelpers
     /// <returns>A task that represents the asynchronous operation, containing the response content as a string.</returns>
     /// <exception cref="HttpRequestException">Thrown if the response indicates a failure.</exception>
     internal static async Task<string> GetResponse(HttpResponseMessage response)
-	{
-		response.EnsureSuccessStatusCode();
-		return await response.Content.ReadAsStringAsync();
-	}
+    {
+        string content = await response.Content.ReadAsStringAsync();
 
-	/// <summary>
-	/// Creates an <see cref="ApplicationException"/> with details about an error occurring during data retrieval.
-	/// </summary>
-	/// <param name="endpoint">The endpoint where the error occurred.</param>
-	/// <param name="ex">The original exception.</param>
-	/// <returns>An <see cref="ApplicationException"/> describing the error.</returns>
-	internal static Exception ThrowError(string endpoint, Exception ex) => new ApplicationException($"Error getting data from {endpoint}", ex);
+        if (!response.IsSuccessStatusCode)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                content = response.ReasonPhrase ?? "Error inesperado.";
+            }
+
+            throw new ApplicationException(content);
+        }
+
+        return content;
+    }
+
+    /// <summary>
+    /// Creates an <see cref="ApplicationException"/> with details about an error occurring during data retrieval.
+    /// </summary>
+    /// <param name="endpoint">The endpoint where the error occurred.</param>
+    /// <param name="ex">The original exception.</param>
+    /// <returns>An <see cref="ApplicationException"/> describing the error.</returns>
+    internal static Exception ThrowError(string endpoint, Exception ex)
+    {
+        if (ex is ApplicationException)
+        {
+            return ex;
+        }
+
+        return new ApplicationException(
+            $"Error al comunicarse con {endpoint}.",
+            ex
+        );
+    }
 }

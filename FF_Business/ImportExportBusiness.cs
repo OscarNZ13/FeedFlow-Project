@@ -1,4 +1,5 @@
 ﻿using FF.Architecture.Dtos;
+using FF.Architecture.Parsers;
 using FF_ModelsDB.Models;
 using System.Text.Json;
 
@@ -7,8 +8,9 @@ namespace FF_Business
     public interface IImportExportBusiness
     {
         Task<bool> ImportAsync(SourcePackageDto package);
+        Task<bool> ImportItemAsync(ExportSourceItemDto item);
         Task<SourcePackageDto?> ExportAsync(int sourceId);
-        Task<SourcePackageDto?> ExportItemAsync(int sourceItemId);
+        Task<ExportSourceItemDto?> ExportItemAsync(int sourceItemId);
     }
 
     public class ImportExportBusiness : IImportExportBusiness
@@ -23,6 +25,79 @@ namespace FF_Business
             _sourceItemBusiness = sourceItemBusiness;
         }
 
+        public async Task<bool> ImportItemAsync(ExportSourceItemDto item)
+        {
+            if (item == null)
+            {
+                return false;
+            }
+
+            var source = await _sourceBusiness.GetByUrlAsync(item.SourceUrl);
+
+            if (source == null)
+            {
+                source = new Source()
+                {
+                    Url = item.SourceUrl,
+                    Name = item.SourceName,
+                    Description = item.SourceDescription,
+                    ComponentType = item.SourceComponentType,
+                    RequiresSecret = item.SourceRequiresSecret
+                };
+
+                await _sourceBusiness.CreateAsync(source);
+
+                source = await _sourceBusiness.GetByUrlAsync(item.SourceUrl);
+            }
+
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.Url) &&
+                await _sourceItemBusiness.ExistsByUrlAsync(item.Url))
+            {
+                throw new InvalidOperationException("La noticia ya existe.");
+            }
+
+            DateTime? publishedAt = null;
+
+            if (!string.IsNullOrWhiteSpace(item.PublishedAt))
+            {
+                DateTime fecha;
+
+                if (DateTime.TryParse(item.PublishedAt, out fecha))
+                {
+                    publishedAt = fecha;
+                }
+                else if (DateTime.TryParseExact(
+                    item.PublishedAt,
+                    "d/M/yyyy HH:mm:ss",
+                    null,
+                    System.Globalization.DateTimeStyles.None,
+                    out fecha))
+                {
+                    publishedAt = fecha;
+                }
+            }
+
+            var newsItem = new NewsItemDto()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Title = item.Title,
+                Description = item.Description,
+                ImageUrl = item.ImageUrl,
+                Url = item.Url,
+                PublishedAt = publishedAt,
+                SourceName = item.SourceName
+            };
+
+            string json = JsonSerializer.Serialize(newsItem);
+
+            return await _sourceItemBusiness.SaveJsonAsync(json, source.Id);
+        }
+
         public async Task<bool> ImportAsync(SourcePackageDto package)
         {
             if (package == null ||
@@ -32,21 +107,16 @@ namespace FF_Business
                 return false;
             }
 
-            var source = await _sourceBusiness
-                .GetByUrlAsync(package.Source.Url);
+            var source = await _sourceBusiness.GetByUrlAsync(package.Source.Url);
 
             if (source == null)
             {
                 source = new Source()
                 {
                     Url = package.Source.Url,
-
                     Name = package.Source.Name,
-
                     Description = package.Source.Description,
-
                     ComponentType = package.Source.ComponentType,
-
                     RequiresSecret = package.Source.RequiresSecret
                 };
 
@@ -61,15 +131,18 @@ namespace FF_Business
 
             foreach (var item in package.Items)
             {
-                string json =
-                    JsonSerializer.Serialize(item);
+                if (!string.IsNullOrWhiteSpace(item.Url) &&
+                    await _sourceItemBusiness.ExistsByUrlAsync(item.Url))
+                {
+                    continue;
+                }
 
+                string json = JsonSerializer.Serialize(item);
 
-                await _sourceItemBusiness
-                    .SaveJsonAsync(
-                        json,
-                        source.Id
-                    );
+                await _sourceItemBusiness.SaveJsonAsync(
+                    json,
+                    source.Id
+                );
             }
 
             return true;
@@ -89,77 +162,60 @@ namespace FF_Business
                 .GetBySourceIdAsync(sourceId);
 
             var sourceItems = items
-                .Select(x =>
-                    JsonSerializer.Deserialize<SourceItemDto>(x.Json)
-                )
-                .Where(x => x != null)
+                .Select(x => JsonSerializer.Deserialize<NewsItemDto>(x.Json))
+                .OfType<NewsItemDto>()
                 .ToList();
 
-            SourcePackageDto package = new SourcePackageDto()
+            SourcePackageDto package = new()
             {
-                Source = new SourceDto()
+                Source = new SourceDto
                 {
                     Url = source.Url,
-
                     Name = source.Name,
-
                     Description = source.Description,
-
                     ComponentType = source.ComponentType,
-
                     RequiresSecret = source.RequiresSecret
                 },
 
                 Items = sourceItems
             };
-
+            
             return package;
         }
-        public async Task<SourcePackageDto?> ExportItemAsync(int sourceItemId)
+
+        public async Task<ExportSourceItemDto?> ExportItemAsync(int sourceItemId)
         {
             var item = await _sourceItemBusiness
                 .GetWithSourceAsync(sourceItemId);
 
-            if (item == null ||
-                item.Source == null)
+            if (item == null || item.Source == null)
             {
                 return null;
             }
 
-            var sourceItem =
-                JsonSerializer.Deserialize<SourceItemDto>(
-                    item.Json
-                );
+            var newsItem = JsonSerializer.Deserialize<NewsItemDto>(item.Json);
 
-            if (sourceItem == null)
+            if (newsItem == null)
             {
                 return null;
             }
 
-            SourcePackageDto package =
-                new SourcePackageDto()
-                {
-                    Source = new SourceDto()
-                    {
-                        Url = item.Source.Url,
+            ExportSourceItemDto dto = new ExportSourceItemDto()
+            {
+                Title = newsItem.Title,
+                Description = newsItem.Description,
+                ImageUrl = newsItem.ImageUrl,
+                Url = newsItem.Url,
+                PublishedAt = newsItem.PublishedAt?.ToString("dd/MM/yyyy HH:mm:ss"),
 
-                        Name = item.Source.Name,
+                SourceName = item.Source.Name,
+                SourceUrl = item.Source.Url,
+                SourceDescription = item.Source.Description,
+                SourceComponentType = item.Source.ComponentType,
+                SourceRequiresSecret = item.Source.RequiresSecret
+            };
 
-                        Description = item.Source.Description,
-
-                        ComponentType = item.Source.ComponentType,
-
-                        RequiresSecret = item.Source.RequiresSecret
-                    },
-
-                    Items = new List<SourceItemDto>()
-                    {
-                sourceItem
-                    }
-                };
-
-            return package;
+            return dto;
         }
-
     }
 }

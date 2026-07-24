@@ -37,6 +37,27 @@ namespace FF_Api.Controllers
             );
         }
 
+        [HttpPost("import/item")]
+        public async Task<IActionResult> ImportItem(
+        [FromBody] ExportSourceItemDto item)
+        {
+            try
+            {
+                var result = await _business.ImportItemAsync(item);
+
+                if (!result)
+                {
+                    return BadRequest("No se pudo importar la noticia.");
+                }
+
+                return Ok("Noticia importada correctamente.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
         [HttpGet("export/{sourceId}")]
         public async Task<IActionResult> Export(int sourceId)
         {
@@ -50,6 +71,8 @@ namespace FF_Api.Controllers
 
             var json = JsonSerializer.Serialize(
                 result,
+
+
                 new JsonSerializerOptions()
                 {
                     WriteIndented = true
@@ -63,7 +86,7 @@ namespace FF_Api.Controllers
             return File(
                 bytes,
                 "application/json",
-                "feedflow-export.json"
+                $"source-{sourceId}.json"
             );
         }
 
@@ -89,10 +112,22 @@ namespace FF_Api.Controllers
             var bytes = System.Text.Encoding.UTF8
                 .GetBytes(json);
 
+            string fileName = result.Title;
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(c, '-');
+            }
+
+            if (fileName.Length > 50)
+            {
+                fileName = fileName.Substring(0, 50);
+            }
+
             return File(
                 bytes,
                 "application/json",
-                "feedflow-item-export.json"
+                $"{fileName}.json"
             );
         }
     }

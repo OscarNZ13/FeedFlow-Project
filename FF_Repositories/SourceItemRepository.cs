@@ -35,7 +35,7 @@ public class SourceItemRepository(FF_DbContext context)
     public async Task<IEnumerable<SourceItem>> ReadLatestAsync(int take)
     {
         return await DbContext.SourceItems
-            .OrderByDescending(i => i.CreatedAt)
+            .OrderByDescending(i => i.Id)
             .Take(take)
             .ToListAsync();
     }

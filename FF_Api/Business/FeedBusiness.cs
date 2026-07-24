@@ -69,11 +69,22 @@ public class FeedBusiness(
         {
             var saved = await sourceItemRepository.ReadLatestAsync(take);
             return saved
-                .Where(x => !string.IsNullOrWhiteSpace(x.Json))
-                .Select(x => JsonSerializer.Deserialize<NewsItemDto>(x.Json!, JsonOptions))
-                .Where(x => x != null)
-                .Select(x => x!)
-                .ToList();
+            .Where(x => !string.IsNullOrWhiteSpace(x.Json))
+            .Select(x =>
+            {
+                var dto = JsonSerializer.Deserialize<NewsItemDto>(x.Json!, JsonOptions);
+
+                if (dto != null)
+                {
+                    dto.SourceItemId = x.Id;
+                }
+
+                return dto;
+            })
+
+        .Where(x => x != null)
+        .Select(x => x!)
+        .ToList();
         }
 
         var sources = await sourceRepository.ReadActiveAsync();

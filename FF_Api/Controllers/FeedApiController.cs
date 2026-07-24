@@ -16,7 +16,7 @@ public class FeedApiController(
 {
 
     [HttpGet("feed")]
-    public async Task<ActionResult<IEnumerable<NewsItemDto>>> GetFeed([FromQuery] int take = 10)
+    public async Task<ActionResult<IEnumerable<NewsItemDto>>> GetFeed([FromQuery] int take = 15)
     {
         var items = await feedBusiness.GetFeedAsync(take);
         return Ok(items);
@@ -67,7 +67,7 @@ public class FeedApiController(
     }
 
     [HttpGet("sources/{id:int}/preview")]
-    public async Task<ActionResult<IEnumerable<NewsItemDto>>> PreviewSource(int id, [FromQuery] int take = 10)
+    public async Task<ActionResult<IEnumerable<NewsItemDto>>> PreviewSource(int id, [FromQuery] int take = 50)
     {
         try
         {

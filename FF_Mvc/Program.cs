@@ -1,8 +1,13 @@
+using FF.Architecture.Providers;
+using FF_Mvc.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IRestProvider, RestProvider>();
+builder.Services.AddScoped<IFeedService, FeedService>();
 
 // Sesiones
 builder.Services.AddDistributedMemoryCache();
@@ -14,9 +19,9 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddHttpClient();
 
-// Configuración de JWT
+// ConfiguraciÃ³n de JWT
 
-// Autenticación con cookies (para MVC)
+// AutenticaciÃ³n con cookies (para MVC)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -24,7 +29,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Account/Logout";
     });
 
-// Configuración de JWT
+// ConfiguraciÃ³n de JWT
 
 var app = builder.Build();
 

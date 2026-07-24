@@ -1,7 +1,11 @@
+using FF.Architecture.Parsers;
+using FF.Architecture.Providers;
+using FF_Api.Business;
 using FF_Business;
 using FF_DataDB.Context;
 using FF_Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -11,20 +15,33 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Registrar DbContext
-builder.Services.AddDbContext<FF_DbContext>();
+builder.Services.AddDbContext<FF_DbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar dependencias
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserBusiness, UserBusiness>();
-builder.Services.AddScoped<ISourceItemRepository, SourceItemRepository>();
-builder.Services.AddScoped<ISourceItemBusiness, SourceItemBusiness>();
 builder.Services.AddScoped<ISourceRepository, SourceRepository>();
+builder.Services.AddScoped<ISourceItemRepository, SourceItemRepository>();
+builder.Services.AddScoped<ISourceSecretRepository, SourceSecretRepository>();
+
+
+builder.Services.AddScoped<IUserBusiness, UserBusiness>();
 builder.Services.AddScoped<ISourceBusiness, SourceBusiness>();
+builder.Services.AddScoped<ISourceItemBusiness, SourceItemBusiness>();
 builder.Services.AddScoped<IImportExportBusiness, ImportExportBusiness>();
 
 
-// Configurar JWT
+builder.Services.AddHttpClient<IFeedFetcher, FeedFetcher>();
+builder.Services.AddSingleton<IFeedParserFactory, FeedParserFactory>();
+builder.Services.AddScoped<IFeedBusiness, FeedBusiness>();
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
+
+
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;
@@ -53,7 +70,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); 
+app.UseCors();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

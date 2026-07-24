@@ -1,4 +1,5 @@
-﻿using FF_ModelsDB.Models;
+﻿using FF.Architecture.Parsers;
+using FF_ModelsDB.Models;
 using FF_Repositories;
 using System.Text.Json;
 
@@ -11,6 +12,7 @@ namespace FF_Business
         Task<SourceItem> GetByIdAsync(int id);
         Task<IEnumerable<SourceItem>> GetBySourceIdAsync(int sourceId);
         Task<SourceItem?> GetWithSourceAsync(int id);
+        Task<bool> ExistsByUrlAsync(string url);
     }
     public class SourceItemBusiness : ISourceItemBusiness
     {
@@ -66,6 +68,34 @@ namespace FF_Business
         {
             return await _sourceItemRepository
                 .FindWithSourceAsync(id);
+        }
+
+        public async Task<bool> ExistsByUrlAsync(string url)
+        {
+            var items = await _sourceItemRepository.ReadAsync();
+
+            foreach (var item in items)
+            {
+                if (string.IsNullOrWhiteSpace(item.Json))
+                    continue;
+
+                try
+                {
+                    var news = JsonSerializer.Deserialize<NewsItemDto>(item.Json);
+
+                    if (news != null &&
+                        !string.IsNullOrWhiteSpace(news.Url) &&
+                        news.Url.Equals(url, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+using FF_ModelsDB.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace FF_DataDB.Context;
+
+public partial class FF_DbContext : DbContext
+{
+    public FF_DbContext()
+    {
+    }
+
+    public FF_DbContext(DbContextOptions<FF_DbContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Source> Sources { get; set; }
+
+    public virtual DbSet<SourceItem> SourceItems { get; set; }
+
+    public virtual DbSet<SourceSecret> SourceSecrets { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<Favorite> Favorites { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC0716AB39D5");
+
+            entity.HasIndex(e => e.Name, "UQ__Roles__737584F6814B4C40").IsUnique();
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<Source>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Sources__3214EC0782B5F4D9");
+
+            entity.Property(e => e.ComponentType).HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.Url).HasMaxLength(500);
+
+
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastFetchedAt).HasColumnType("datetime");
+
+        });
+
+        modelBuilder.Entity<SourceItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SourceIt__3214EC075788BD3E");
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Source).WithMany(p => p.SourceItems)
+                .HasForeignKey(d => d.SourceId)
+                .HasConstraintName("FK_SourceItems_Sources");
+        });
+
+
+        modelBuilder.Entity<SourceSecret>(entity =>
+        {
+            entity.ToTable("SourceSecrets");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.KeyName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.KeyValue).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Location).HasConversion<string>().HasMaxLength(20);
+
+            entity.HasOne(e => e.Source)
+                .WithMany(s => s.Secrets)
+                .HasForeignKey(e => e.SourceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07D2C32D74");
+
+            entity.HasIndex(e => e.Username, "UQ__Users__536C85E4818DCC46").IsUnique();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Email).HasMaxLength(25);
+            entity.Property(e => e.PasswordHash).HasMaxLength(500);
+            entity.Property(e => e.Username).HasMaxLength(200);
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Users_Roles");
+        });
+
+        modelBuilder.Entity<Favorite>(entity =>
+        {
+            entity.ToTable("Favorites");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.UserId, e.SourceItemId }).IsUnique();
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.LastLikedAt).HasColumnType("datetime");
+
+            entity.HasOne(e => e.User).WithMany(u => u.Favorites)
+                .HasForeignKey(e => e.UserId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.SourceItem).WithMany(i => i.Favorites)
+                .HasForeignKey(e => e.SourceItemId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+}

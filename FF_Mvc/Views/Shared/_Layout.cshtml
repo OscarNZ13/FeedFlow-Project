@@ -39,12 +39,22 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Feed" asp-action="Index">Feed</a>
                         </li>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Favorite" asp-action="Index"><i class="bi bi-heart-fill text-danger"></i> Favoritos</a>
+                            </li>
+                        }
+
                         @if (isAdmin)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Users" asp-action="Index">Usuarios</a>
                             </li>
                         }
+
+
 
                     </ul>
 

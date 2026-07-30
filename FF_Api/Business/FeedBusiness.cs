@@ -94,16 +94,30 @@ public class FeedBusiness(
         {
             try
             {
-                var sourceWithSecrets = await sourceRepository.FindWithSecretsAsync(source.Id);
-                if (sourceWithSecrets is null) continue;
-
-                var items = await FetchAndParseAsync(sourceWithSecrets);
-                results.AddRange(items);
+                await RefreshSourceAsync(source.Id);
             }
             catch
             {
+               
             }
         }
+
+        var savedAfterRefresh = await sourceItemRepository.ReadLatestAsync(take);
+
+        return savedAfterRefresh
+            .Where(x => !string.IsNullOrWhiteSpace(x.Json))
+            .Select(x =>
+            {
+                var dto = JsonSerializer.Deserialize<NewsItemDto>(x.Json!, JsonOptions);
+
+                if (dto is not null)
+                    dto.SourceItemId = x.Id;
+
+                return dto;
+            })
+            .Where(x => x is not null)
+            .Select(x => x!)
+            .ToList();
 
         return results.Take(take);
     }

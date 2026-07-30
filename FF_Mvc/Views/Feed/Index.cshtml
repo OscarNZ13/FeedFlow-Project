@@ -147,6 +147,16 @@ else
                                 </a>
                             }
 
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <form asp-controller="Favorite" asp-action="Add" method="post" class="ms-2">
+                                    <input type="hidden" name="sourceItemId" value="@item.SourceItemId" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Agregar a favoritos">
+                                        <i class="bi bi-heart"></i> Favoritos
+                                    </button>
+                                </form>
+                            }
+
                         </div>
 
                     </div>

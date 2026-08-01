@@ -15,7 +15,7 @@ public class FeedController(IFeedService feedService) : Controller
 
     public IActionResult Download(int id)
     {
-        return Redirect($"https://localhost:7283/ImportExportApi/export/item/{id}");
+        return Redirect($"https://localhost:0/ImportExportApi/export/item/{id}");
     }
 
     [HttpGet]

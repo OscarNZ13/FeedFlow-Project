@@ -9,7 +9,7 @@ namespace FF_Mvc.Controllers;
 [Authorize]
 public class FavoriteController(IHttpClientFactory httpClientFactory) : Controller
 {
-    private const string ApiBaseUrl = "https://localhost:7283/FavoriteApi";
+    private const string ApiBaseUrl = "https://localhost:0/FavoriteApi";
 
     public async Task<IActionResult> Index()
     {

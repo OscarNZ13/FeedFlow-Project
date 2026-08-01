@@ -11,7 +11,7 @@ namespace FF_Mvc.Controllers;
 public class UsersController : Controller
 {
     private readonly HttpClient _httpClient;
-    private const string ApiBaseUrl = "https://localhost:7283/UserApi";
+    private const string ApiBaseUrl = "https://localhost:0/UserApi";
 
     public UsersController(IHttpClientFactory factory)
     {

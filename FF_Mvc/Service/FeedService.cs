@@ -14,7 +14,7 @@ public interface IFeedService
 
 public class FeedService(IRestProvider restProvider) : IFeedService
 {
-    private const string ApiBaseUrl = "https://localhost:7283/FeedApi";
+    private const string ApiBaseUrl = "https://localhost:0/FeedApi";
 
     public async Task<IEnumerable<NewsItemDto>> GetFeedAsync(int take = 10)
     {
@@ -38,7 +38,7 @@ public class FeedService(IRestProvider restProvider) : IFeedService
         try
         {
             await restProvider.PostAsync(
-                "https://localhost:7283/ImportExportApi/import/item",
+                "https://localhost:0/ImportExportApi/import/item",
                 json);
 
             return new ImportResult

@@ -32,7 +32,7 @@ public partial class FF_DbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("x");
+            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS02;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
         }
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

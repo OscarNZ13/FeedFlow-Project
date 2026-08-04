@@ -1,0 +1,71 @@
+﻿@model IEnumerable<FF_Mvc.ViewModels.SourceListItemViewModel>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        @TempData["Success"]
+        <button class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        @TempData["Error"]
+        <button class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">📡 Fuentes registradas</h2>
+    <a asp-controller="Feed" asp-action="AddSource" class="btn btn-primary shadow-sm rounded-pill">
+        <i class="bi bi-plus-circle me-2"></i>
+        Agregar fuente
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <p>No hay fuentes registradas todavía.</p>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>URL</th>
+                <th>Tipo</th>
+                <th>Requiere key</th>
+                <th>Última actualización</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var source in Model)
+            {
+                <tr>
+                    <td>@source.Name</td>
+                    <td><small class="text-muted">@source.Url</small></td>
+                    <td>@source.ComponentType</td>
+                    <td>@(source.RequiresSecret ? "Sí" : "No")</td>
+                    <td>@(source.LastFetchedAt?.ToString("g") ?? "Nunca")</td>
+                    <td class="text-nowrap">
+                        <form asp-action="RefreshSource" asp-route-id="@source.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">
+                                <i class="bi bi-arrow-repeat me-1"></i>Refrescar
+                            </button>
+                        </form>
+                        <form asp-action="DeleteSource" asp-route-id="@source.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar \'@source.Name\'? Esto también borra sus noticias guardadas.');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                                <i class="bi bi-trash me-1"></i>Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

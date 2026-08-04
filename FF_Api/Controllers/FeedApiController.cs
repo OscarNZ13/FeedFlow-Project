@@ -12,6 +12,7 @@ namespace FF_Api.Controllers;
 public class FeedApiController(
     IFeedBusiness feedBusiness,
     ISourceRepository sourceRepository,
+    ISourceItemRepository sourceItemRepository,
     ISourceSecretRepository sourceSecretRepository) : ControllerBase
 {
 
@@ -99,6 +100,39 @@ public class FeedApiController(
         catch (ApplicationException ex)
         {
             return StatusCode(502, ex.Message);
+        }
+    }
+
+    // DELETE
+    [HttpDelete("sources/{id:int}")]
+    public async Task<IActionResult> DeleteSource(int id)
+    {
+        var source = await sourceRepository.FindAsync(id);
+        if (source is null) return NotFound();
+
+        try
+        {
+            var items = await sourceItemRepository.FindBySourceIdAsync(id);
+            foreach (var item in items)
+            {
+                await sourceItemRepository.DeleteAsync(item);
+            }
+
+            var secrets = await sourceSecretRepository.ReadBySourceAsync(id);
+            foreach (var secret in secrets)
+            {
+                await sourceSecretRepository.DeleteAsync(secret);
+            }
+
+            var deleted = await sourceRepository.DeleteAsync(source);
+            if (!deleted) return StatusCode(500, "No se pudo eliminar la fuente (SaveChanges devolvió 0 filas).");
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            return StatusCode(500, $"Error eliminando la fuente: {detail}");
         }
     }
 

@@ -28,11 +28,15 @@ public partial class FF_DbContext : DbContext
 
     public virtual DbSet<Favorite> Favorites { get; set; }
 
+    public virtual DbSet<Collection> Collections { get; set; }
+    public virtual DbSet<CollectionItem> CollectionItems { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS02;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=LAPTOP-QIN0I11O\\SQLEXPRESS;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
         }
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -126,6 +130,32 @@ public partial class FF_DbContext : DbContext
             entity.HasOne(e => e.SourceItem).WithMany(i => i.Favorites)
                 .HasForeignKey(e => e.SourceItemId).OnDelete(DeleteBehavior.Cascade);
         });
+
+        modelBuilder.Entity<Collection>(entity =>
+        {
+            entity.ToTable("Collections");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+
+        });
+
+        modelBuilder.Entity<CollectionItem>(entity =>
+        {
+            entity.ToTable("CollectionItems");
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Collection)
+                  .WithMany(c => c.Items)
+                  .HasForeignKey(e => e.CollectionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.SourceItem)
+                  .WithMany()
+                  .HasForeignKey(e => e.SourceItemId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+
 
 
         OnModelCreatingPartial(modelBuilder);

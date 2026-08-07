@@ -1,0 +1,41 @@
+﻿@model FF_ModelsDB.Models.Collection
+
+@{
+    ViewData["Title"] = "Crear Colección";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="ff-card">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Administración de colecciones</div>
+    </div>
+
+    <div class="ff-divider">
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Crear Colección</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    <form asp-action="CreateCollection" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label for="name" class="ff-label">Nombre de la colección</label>
+            <input type="text" id="name" name="name" class="form-control" required />
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="ff-btn ff-btn-primary">Guardar</button>
+            <a asp-action="Index" class="ff-btn ff-btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FF_DataContextDB\FF_DataDB.csproj" />
     <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
   </ItemGroup>
 

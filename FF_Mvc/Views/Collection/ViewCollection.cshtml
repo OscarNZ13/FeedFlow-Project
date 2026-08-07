@@ -2,8 +2,8 @@
 @model IEnumerable<NewsItemDto>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-heart-fill text-danger me-2"></i>Mis favoritos</h2>
-    <a asp-controller="Feed" asp-action="Index" class="btn btn-outline-primary">Volver al feed</a>
+    <h2 class="mb-0"><i class="bi bi-folder-fill text-warning me-2"></i>Noticias en la colección</h2>
+    <a asp-controller="Collection" asp-action="Index" class="btn btn-outline-primary">Volver a colecciones</a>
 </div>
 
 @if (TempData["Success"] is not null)
@@ -17,7 +17,7 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">Aún no tienes noticias favoritas.</div>
+    <div class="alert alert-info">Esta colección aún no tiene noticias.</div>
 }
 else
 {
@@ -35,8 +35,19 @@ else
                         <p class="card-text text-muted flex-grow-1">@item.Description</p>
                         <div class="mb-3"><span class="badge bg-primary">@item.SourceName</span></div>
                         <div class="d-flex gap-2 align-items-center">
-                            <form asp-action="Like" method="post"><input name="sourceItemId" type="hidden" value="@item.SourceItemId" /><button class="btn btn-danger btn-sm" title="Dar like y mover al inicio"><i class="bi bi-heart-fill"></i> Like</button></form>
-                            <form asp-action="Remove" method="post"><input name="sourceItemId" type="hidden" value="@item.SourceItemId" /><button class="btn btn-outline-secondary btn-sm" title="Quitar de favoritos"><i class="bi bi-trash"></i></button></form>
+                            <form asp-controller="Favorite" asp-action="Add" method="post">
+                                <input name="sourceItemId" type="hidden" value="@item.SourceItemId" />
+                                <button class="btn btn-outline-danger btn-sm" title="Agregar a favoritos">
+                                    <i class="bi bi-heart"></i> Favoritos
+                                </button>
+                            </form>
+                            <form asp-controller="Collection" asp-action="RemoveItem" method="post">
+                                <input name="sourceItemId" type="hidden" value="@item.SourceItemId" />
+                                <input name="collectionId" type="hidden" value="@ViewBag.CollectionId" />
+                                <button class="btn btn-outline-secondary btn-sm" title="Quitar de colección">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                             @if (!string.IsNullOrWhiteSpace(item.Url))
                             {
                                 <a href="@item.Url" target="_blank" class="btn btn-outline-primary btn-sm ms-auto">Ver original</a>
@@ -48,5 +59,3 @@ else
         }
     </div>
 }
-
-

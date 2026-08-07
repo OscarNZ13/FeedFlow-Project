@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using FF.Architecture.Parsers;
+using FF_ModelsDB.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ public class FavoriteController(IHttpClientFactory httpClientFactory) : Controll
 {
     private const string ApiBaseUrl = "https://localhost:7283/FavoriteApi";
 
+    /*
     public async Task<IActionResult> Index()
     {
         var client = CreateAuthenticatedClient();
@@ -26,7 +28,24 @@ public class FavoriteController(IHttpClientFactory httpClientFactory) : Controll
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? [];
         return View(items);
     }
+    */
 
+    public async Task<IActionResult> Index()
+    {
+        var client = CreateAuthenticatedClient();
+
+        // Favoritos
+        var response = await client.GetAsync("https://localhost:7283/FavoriteApi");
+        var items = response.IsSuccessStatusCode
+            ? JsonSerializer.Deserialize<IEnumerable<NewsItemDto>>(await response.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? []
+            : Enumerable.Empty<NewsItemDto>();
+
+        return View(items);
+    }
+
+
+    /*
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(int sourceItemId)
@@ -36,7 +55,38 @@ public class FavoriteController(IHttpClientFactory httpClientFactory) : Controll
             ? "Noticia agregada a favoritos."
             : "No fue posible agregar la noticia a favoritos.";
         return RedirectToAction("Index", "Feed");
+    }*/
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Add(int sourceItemId, int[]? collectionIds)
+    {
+        var client = CreateAuthenticatedClient();
+
+        // Siempre guardar en favoritos
+        var response = await client.PostAsync($"{ApiBaseUrl}/{sourceItemId}", null);
+
+        // Si el usuario seleccionó colecciones, guardar también en ellas
+        if (response.IsSuccessStatusCode && collectionIds != null && collectionIds.Any())
+        {
+            foreach (var collectionId in collectionIds)
+            {
+                var content = new FormUrlEncodedContent(new[]
+                {
+                new KeyValuePair<string,string>("sourceItemId", sourceItemId.ToString())
+            });
+                await client.PostAsync($"https://localhost:7283/CollectionApi/{collectionId}/addItem", content);
+            }
+        }
+
+        TempData[response.IsSuccessStatusCode ? "Success" : "Error"] = response.IsSuccessStatusCode
+            ? "Noticia agregada a favoritos."
+            : "No fue posible agregar la noticia a favoritos.";
+
+        return RedirectToAction("Index", "Feed");
     }
+
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]

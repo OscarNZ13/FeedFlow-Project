@@ -142,6 +142,23 @@
     font-size: 1.5rem;
 }
 
+/* Etiquetas y valores en blanco dentro de <dl> */
+.ff-label, .ff-text, .ff-dl dt, .ff-dl dd {
+    color: #fff;
+}
+
+.ff-alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.ff-alert {
+    color: #fff;
+}
+
+
 /* Dropdown oscuro */
 .navbar .dropdown-menu.custom-dropdown {
     background-color: #000 !important;

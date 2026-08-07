@@ -228,7 +228,8 @@ public class UsersController : Controller
         var response = await _httpClient.PutAsync($"{ApiBaseUrl}/users/change-password", content);
 
         if (response.IsSuccessStatusCode)
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Feed");
+
 
         var error = await response.Content.ReadAsStringAsync();
         ModelState.AddModelError("", error);

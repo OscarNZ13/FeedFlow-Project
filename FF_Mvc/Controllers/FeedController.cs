@@ -1,18 +1,51 @@
+using FF.Architecture.Parsers;
+using FF_ModelsDB.Models;
 using FF_Mvc.Service;
 using FF_Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace FF_Mvc.Controllers;
 
-public class FeedController(IFeedService feedService) : Controller
+public class FeedController(IFeedService feedService, IHttpClientFactory httpClientFactory) : Controller
 {
+
+    /*
     public async Task<IActionResult> Index()
     {
         var items = (await feedService.GetFeedAsync(50)).ToList();
         ViewBag.Total = items.Count;
 
         return View(items);
+    }*/
+
+    private HttpClient CreateAuthenticatedClient()
+    {
+        var client = httpClientFactory.CreateClient();
+        var token = HttpContext.Session.GetString("JwtToken");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return client;
     }
+
+    public async Task<IActionResult> Index()
+    {
+        // Noticias desde el servicio
+        var items = (await feedService.GetFeedAsync(50)).ToList();
+        ViewBag.Total = items.Count;
+
+        // Colecciones del usuario
+        var client = CreateAuthenticatedClient();
+        var collectionsResponse = await client.GetAsync("https://localhost:7283/CollectionApi");
+        ViewBag.Collections = collectionsResponse.IsSuccessStatusCode
+            ? JsonSerializer.Deserialize<IEnumerable<Collection>>(await collectionsResponse.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? []
+            : Enumerable.Empty<Collection>();
+
+        return View(items);
+    }
+
+
 
     public IActionResult Download(int id)
     {

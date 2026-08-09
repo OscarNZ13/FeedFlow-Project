@@ -33,15 +33,19 @@ public class XmlFeedParser : IFeedParser
 
     private static NewsItemDto MapElement(XElement element, string sourceName)
     {
+        var title = GetValue(element, "title", "name") ?? "(sin título)";
+        var description = GetValue(element, "description", "summary", "content");
+        var url = GetValue(element, "link", "url");
+
         return new NewsItemDto
         {
             SourceName = sourceName,
-            Id = GetValue(element, "id", "guid") ?? Guid.NewGuid().ToString("N"),
-            Title = GetValue(element, "title", "name") ?? "(sin título)",
-            Description = GetValue(element, "description", "summary", "content"),
+            Id = GetValue(element, "id", "guid") ?? StableIdGenerator.Generate(sourceName, url, title, description),
+            Title = title,
+            Description = description,
             Category = GetValue(element, "category", "section"),
             ImageUrl = GetImageValue(element),
-            Url = GetValue(element, "link", "url"),
+            Url = url,
             Tags = GetTags(element),
             PublishedAt = GetDate(element)
         };

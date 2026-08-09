@@ -62,15 +62,19 @@ public class JsonFeedParser : IFeedParser
 
     private static NewsItemDto MapElement(JsonElement element, string sourceName)
     {
+        var title = GetString(element, TitleKeys) ?? "(sin título)";
+        var description = GetString(element, DescriptionKeys);
+        var url = GetString(element, UrlKeys);
+
         var dto = new NewsItemDto
         {
             SourceName = sourceName,
-            Id = GetString(element, IdKeys) ?? Guid.NewGuid().ToString("N"),
-            Title = GetString(element, TitleKeys) ?? "(sin título)",
-            Description = GetString(element, DescriptionKeys),
+            Id = GetString(element, IdKeys) ?? StableIdGenerator.Generate(sourceName, url, title, description),
+            Title = title,
+            Description = description,
             Category = GetString(element, CategoryKeys),
             ImageUrl = GetImageValue(element),
-            Url = GetString(element, UrlKeys),
+            Url = url,
             Tags = GetTags(element),
             PublishedAt = GetDate(element)
         };

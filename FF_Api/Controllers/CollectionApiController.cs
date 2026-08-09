@@ -77,6 +77,13 @@ public class CollectionApiController(FF_DbContext context) : ControllerBase
         var collection = await context.Collections.SingleOrDefaultAsync(c => c.Id == id && c.UserId == userId);
         if (collection is null) return NotFound();
 
+        // Evita duplicados: si la noticia ya está en la colección, no se vuelve a insertar.
+        var existingItem = await context.CollectionItems
+            .SingleOrDefaultAsync(ci => ci.CollectionId == id && ci.SourceItemId == sourceItemId);
+
+        if (existingItem is not null)
+            return Ok(existingItem);
+
         var item = new CollectionItem { CollectionId = id, SourceItemId = sourceItemId };
         context.CollectionItems.Add(item);
         await context.SaveChangesAsync();

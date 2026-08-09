@@ -1,8 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="ff-card ff-hero">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Tu fuente de noticias</div>
+    </div>
+
+    <p class="ff-hero-lead">
+        Centralizá y curá noticias de múltiples fuentes en un solo lugar.
+        Agregá orígenes, guardá lo que te interesa y llevalo con vos
+        exportándolo cuando quieras.
+    </p>
+
+    <div class="ff-divider">
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Qué podés hacer</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    <div class="ff-feature-grid">
+        <div class="ff-feature-card">
+            <div class="ff-feature-icon">◆</div>
+            <div class="ff-feature-title">Feed unificado</div>
+            <div class="ff-feature-desc">Leé noticias de todas tus fuentes en una sola vista, sin importar el formato.</div>
+        </div>
+        <div class="ff-feature-card">
+            <div class="ff-feature-icon">☆</div>
+            <div class="ff-feature-title">Colecciones</div>
+            <div class="ff-feature-desc">Guardá y organizá los ítems que te interesan en tus propias colecciones.</div>
+        </div>
+        <div class="ff-feature-card">
+            <div class="ff-feature-icon">⇄</div>
+            <div class="ff-feature-title">Exportá / Importá</div>
+            <div class="ff-feature-desc">Descargá tus noticias en JSON y cargalas en cualquier otra instancia de FeedFlow.</div>
+        </div>
+    </div>
+
+    <div class="ff-divider">
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Accesos rápidos</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    <div class="form-actions">
+        <a asp-controller="Feed" asp-action="Index" class="ff-btn ff-btn-primary">Ver Feed</a>
+        <a asp-controller="Feed" asp-action="Sources" class="ff-btn ff-btn-secondary">Fuentes</a>
+        <a asp-controller="Users" asp-action="Index" class="ff-btn ff-btn-secondary">Usuarios</a>
+    </div>
+
+    <div class="ff-footer">
+        <a asp-controller="Home" asp-action="Privacy">Privacidad</a>
+    </div>
 </div>

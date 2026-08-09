@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using FF_DataDB.Context;
 using FF_ModelsDB.Models;
 using Microsoft.AspNetCore.Authorization;

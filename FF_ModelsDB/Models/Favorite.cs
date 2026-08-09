@@ -1,6 +1,6 @@
 ﻿namespace FF_ModelsDB.Models;
 
-/// <summary>Relación entre un usuario y una noticia marcada como favorita.</summary>
+
 public class Favorite
 {
     public int Id { get; set; }

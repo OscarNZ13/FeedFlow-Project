@@ -38,14 +38,14 @@
 
     <form asp-action="Register" method="post">
         <label class="ff-label" asp-for="Username">Usuario</label>
-        <input class="ff-input" asp-for="Username" type="text" placeholder="tunombre" />
+        <input class="ff-input" asp-for="Username" type="text" placeholder="" />
 
         <label class="ff-label" asp-for="Email">Email</label>
-        <input class="ff-input" asp-for="Email" type="email" placeholder="tucorreo@email.com" />
+        <input class="ff-input" asp-for="Email" type="email" placeholder="" />
 
         <label class="ff-label" asp-for="Password">Contraseña</label>
         <div class="ff-input-wrapper">
-            <input class="ff-input" asp-for="Password" type="password" placeholder="••••••••" id="passwordInput" />
+            <input class="ff-input" asp-for="Password" type="password" placeholder="" id="passwordInput" />
             <span class="ff-eye" onclick="togglePassword()">👁</span>
         </div>
         <div class="ff-hint">
@@ -69,8 +69,7 @@
         input.type = input.type === 'password' ? 'text' : 'password';
     }
 
-    // Solo indicador visual para el usuario mientras escribe.
-    // La validación real sigue viviendo en RegisterViewModel / servidor.
+    
     document.getElementById('passwordInput').addEventListener('input', function () {
         const value = this.value;
 

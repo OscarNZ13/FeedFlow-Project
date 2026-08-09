@@ -50,17 +50,17 @@ public class AccountController : Controller
         var result = JsonSerializer.Deserialize<JsonElement>(responseBody);
         var token = result.GetProperty("token").GetString();
 
-        // Guardar token en sesión
+        // Guardar token en sesion
         HttpContext.Session.SetString("JwtToken", token!);
 
-        // Decodificar el JWT y crear ClaimsPrincipal
+        // Decodificar el JWT
         var handler = new JwtSecurityTokenHandler();
         var jwtToken = handler.ReadJwtToken(token);
 
         var identity = new ClaimsIdentity(jwtToken.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
 
-        // Firmar al usuario en MVC (cookie)
+        //Cookie para el usuario autenticado
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         return RedirectToAction("Index", "Home");

@@ -19,11 +19,13 @@
 <body>
     <header>
 
-        <!-- Navbar editorial oscuro -->
+        
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark ff-navbar border-bottom mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand ff-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <span class="ff-brand-mark">📰</span> FeedFlow
+                    <span class="ff-brand-mark">
+                        <i class="bi bi-journal-text"></i>
+                    </span> FeedFlow
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +58,7 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Favorite" asp-action="Index"><i class="bi bi-heart-fill text-danger"></i> Favoritos</a>
+                                <a class="nav-link" asp-controller="Favorite" asp-action="Index"><i class=""></i> Favoritos</a>
                             </li>
                         }
 
@@ -76,7 +78,6 @@
                     </ul>
 
 
-                    <!-- Dropdown con icono de usuario -->
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -116,8 +117,8 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
-            const TIMEOUT = 60 * 60 * 1000;      // 1 hora
-            const WARNING = 5 * 60 * 1000;       // aviso a los 55 minutos
+            const TIMEOUT = 60 * 60 * 1000;      
+            const WARNING = 5 * 60 * 1000;       
             let warningTimer, logoutTimer;
 
             function resetTimers() {

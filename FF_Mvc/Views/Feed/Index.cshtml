@@ -28,7 +28,10 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">📰 Feed de Noticias</h2>
+    <h2 class="mb-0">
+        <i class="bi bi-journal"></i> Feed de Noticias
+    </h2>
+
     @if (isAdmin)
     {
         <a asp-controller="Feed" asp-action="Import" class="btn btn-primary shadow-sm rounded-pill">
@@ -96,7 +99,7 @@ else
                             {
                                 if (ViewBag.Collections != null && ((IEnumerable<Collection>)ViewBag.Collections).Any())
                                 {
-                                    <!-- Botón que abre modal -->
+                                    
                                     <button type="button" class="btn btn-outline-danger btn-sm"
                                             data-bs-toggle="modal"
                                             data-bs-target="#favoriteModal"
@@ -106,7 +109,7 @@ else
                                 }
                                 else
                                 {
-                                    <!-- Si no hay colecciones, envía directo -->
+                                   
                                     <form asp-controller="Favorite" asp-action="Add" method="post" class="ms-2">
                                         <input type="hidden" name="sourceItemId" value="@item.SourceItemId" />
                                         <button type="submit" class="btn btn-outline-danger btn-sm" title="Agregar a favoritos">
@@ -123,7 +126,7 @@ else
     </div>
 }
 
-<!-- Modal de favoritos -->
+
 <div class="modal fade" id="favoriteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -134,7 +137,7 @@ else
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="sourceItemId" name="sourceItemId" />
-                    <p>¿Desea guardar esta noticia en alguna colección además de favoritos?</p>
+                    <p>¿Si desea guardar esta noticia en alguna colección además de favoritos por favor seleccione la colección?</p>
                     @if (ViewBag.Collections != null && ((IEnumerable<Collection>)ViewBag.Collections).Any())
                     {
                         @foreach (var collection in (IEnumerable<Collection>)ViewBag.Collections)
@@ -153,14 +156,14 @@ else
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Guardar</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Solo favoritos</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Modal de descarga -->
+
 <div class="modal fade" id="downloadModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

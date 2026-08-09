@@ -21,7 +21,7 @@ public class SourceFormViewModel
 
     public string? SecretKeyValue { get; set; }
 
-    /// <summary>0 = Header, 1 = QueryString (igual que FF_ModelsDB.Models.SecretLocation)</summary>
+    
     public int SecretLocation { get; set; } = 0;
 }
 

@@ -21,7 +21,7 @@ public class UserApiController : ControllerBase
         _userBusiness = userBusiness;
     }
 
-    //Para identificar si el usuario es admin o sea que tengo RoleId= 1
+    //Para identificar si el usuario es admin o sea que tenga RoleId= 1
     private bool IsAdmin()
     {
         var roleId = User.Claims.FirstOrDefault(c => c.Type == "roleId")?.Value;

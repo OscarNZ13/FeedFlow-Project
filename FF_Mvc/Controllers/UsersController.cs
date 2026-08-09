@@ -50,7 +50,7 @@ public class UsersController : Controller
 
         AddJwt();
 
-        //Valida si el username o email ya existe (Se valida en API)
+        
         var checkResponse = await _httpClient.GetAsync($"{ApiBaseUrl}/check-availability?username={model.Username}&email={model.Email}");
         if (!checkResponse.IsSuccessStatusCode)
         {
@@ -68,7 +68,7 @@ public class UsersController : Controller
             return View(model);
         }
 
-        // Verificar que RoleId sea valido
+        
         if (model.RoleId != 1 && model.RoleId != 2)
         {
             ModelState.AddModelError("RoleId", "Debe seleccionar un rol válido.");
@@ -195,7 +195,7 @@ public class UsersController : Controller
         var error = await response.Content.ReadAsStringAsync();
         ModelState.AddModelError("", error);
 
-        //Para mostrar error en la vista de Delete
+        
         var userResponse = await _httpClient.GetAsync($"{ApiBaseUrl}/get-user/{id}");
         if (userResponse.IsSuccessStatusCode)
         {
@@ -221,7 +221,7 @@ public class UsersController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        AddJwt(); // agrega el token al header
+        AddJwt(); //Agrega el token al header para hacer la identificacion
 
         var json = JsonSerializer.Serialize(model);
         var content = new StringContent(json, Encoding.UTF8, "application/json");

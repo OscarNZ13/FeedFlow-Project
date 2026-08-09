@@ -65,7 +65,7 @@ public class CollectionController(IHttpClientFactory httpClientFactory) : Contro
         var collection = collections.FirstOrDefault(c => c.Id == id);
         if (collection == null) return NotFound();
 
-        return View(collection); // busca Views/Collection/RenameCollection.cshtml
+        return View(collection); 
     }
 
     [HttpPost]
@@ -99,7 +99,7 @@ public class CollectionController(IHttpClientFactory httpClientFactory) : Contro
         var collection = collections.FirstOrDefault(c => c.Id == id);
         if (collection == null) return NotFound();
 
-        return View(collection); // busca Views/Collection/DeleteCollection.cshtml
+        return View(collection); 
     }
 
     [HttpPost]
@@ -116,20 +116,6 @@ public class CollectionController(IHttpClientFactory httpClientFactory) : Contro
         return RedirectToAction(nameof(Index));
     }
 
-
-
-    /*
-    [HttpPost]
-    public async Task<IActionResult> CreateCollection(int userId, string name)
-    {
-        var client = CreateAuthenticatedClient();
-        var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("name", name) });
-        var response = await client.PostAsync($"{ApiBaseUrl}/{userId}/create", content);
-        TempData[response.IsSuccessStatusCode ? "Success" : "Error"] = response.IsSuccessStatusCode
-            ? "Colección creada."
-            : "No fue posible crear la colección.";
-        return RedirectToAction(nameof(Index), new { userId });
-    }*/
 
     [HttpGet]
     public async Task<IActionResult> ViewCollection(int id)

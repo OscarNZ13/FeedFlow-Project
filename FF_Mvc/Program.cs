@@ -21,7 +21,7 @@ builder.Services.AddHttpClient();
 
 // Configuración de JWT
 
-// Autenticación con cookies (para MVC)
+//Cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -43,7 +43,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
-app.UseAuthentication(); //JWT
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllerRoute(

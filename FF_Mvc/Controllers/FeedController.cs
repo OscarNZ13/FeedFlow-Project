@@ -11,14 +11,6 @@ namespace FF_Mvc.Controllers;
 public class FeedController(IFeedService feedService, IHttpClientFactory httpClientFactory) : Controller
 {
 
-    /*
-    public async Task<IActionResult> Index()
-    {
-        var items = (await feedService.GetFeedAsync(50)).ToList();
-        ViewBag.Total = items.Count;
-
-        return View(items);
-    }*/
 
     private HttpClient CreateAuthenticatedClient()
     {
@@ -30,11 +22,11 @@ public class FeedController(IFeedService feedService, IHttpClientFactory httpCli
 
     public async Task<IActionResult> Index()
     {
-        // Noticias desde el servicio
+        
         var items = (await feedService.GetFeedAsync(50)).ToList();
         ViewBag.Total = items.Count;
 
-        // Colecciones del usuario
+        // Las colecciones del usuario
         var client = CreateAuthenticatedClient();
         var collectionsResponse = await client.GetAsync("https://localhost:7283/CollectionApi");
         ViewBag.Collections = collectionsResponse.IsSuccessStatusCode

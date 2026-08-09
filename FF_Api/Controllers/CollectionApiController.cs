@@ -74,20 +74,25 @@ public class CollectionApiController(FF_DbContext context) : ControllerBase
         var userId = GetUserId();
         if (userId is null) return Unauthorized();
 
-        var collection = await context.Collections.SingleOrDefaultAsync(c => c.Id == id && c.UserId == userId);
-        if (collection is null) return NotFound();
+        var collection = await context.Collections
+            .SingleOrDefaultAsync(c => c.Id == id && c.UserId == userId);
 
-        // Evita duplicados: si la noticia ya está en la colección, no se vuelve a insertar.
-        var existingItem = await context.CollectionItems
-            .SingleOrDefaultAsync(ci => ci.CollectionId == id && ci.SourceItemId == sourceItemId);
+        if (collection is null) return NotFound("Colección no encontrada.");
 
-        if (existingItem is not null)
-            return Ok(existingItem);
+        if (!await context.SourceItems.AnyAsync(s => s.Id == sourceItemId))
+            return NotFound("La noticia no existe.");
 
-        var item = new CollectionItem { CollectionId = id, SourceItemId = sourceItemId };
-        context.CollectionItems.Add(item);
+        if (await context.CollectionItems.AnyAsync(ci => ci.CollectionId == id && ci.SourceItemId == sourceItemId))
+            return Ok("La noticia ya está en la colección.");
+
+        context.CollectionItems.Add(new CollectionItem
+        {
+            CollectionId = id,
+            SourceItemId = sourceItemId
+        });
+
         await context.SaveChangesAsync();
-        return Ok(item);
+        return Ok("Noticia agregada a la colección.");
     }
 
     [HttpGet("{id}/items")]

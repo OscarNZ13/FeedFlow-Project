@@ -30,7 +30,7 @@ public class TxtFeedParser : IFeedParser
         return new NewsItemDto
         {
             SourceName = sourceName,
-            Id = Guid.NewGuid().ToString("N"),
+            Id = StableIdGenerator.Generate(sourceName, url: null, title, description),
             Title = title,
             Description = description
         };

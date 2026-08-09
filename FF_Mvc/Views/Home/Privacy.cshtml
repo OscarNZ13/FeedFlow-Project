@@ -1,6 +1,26 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Privacidad";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="ff-card" style="max-width:700px;">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Política de privacidad</div>
+    </div>
+
+    <p style="color:#9a9a9a; font-size:14px; line-height:1.8;">
+        FeedFlow utiliza tus datos de cuenta (usuario, correo y contraseña cifrada)
+        únicamente para autenticarte y personalizar tu experiencia dentro de la
+        aplicación: fuentes agregadas, favoritos y colecciones guardadas.
+    </p>
+
+    <p style="color:#9a9a9a; font-size:14px; line-height:1.8;">
+        No compartimos tu información con terceros. Los ítems de noticias que
+        importás o exportás en formato JSON son de tu propiedad y podés
+        eliminarlos en cualquier momento desde tu cuenta.
+    </p>
+
+    <div class="ff-footer" style="margin-top:1.5rem;">
+        <a asp-controller="Home" asp-action="Index">Volver al inicio</a>
+    </div>
+</div>

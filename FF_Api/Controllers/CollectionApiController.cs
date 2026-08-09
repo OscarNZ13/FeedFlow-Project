@@ -4,6 +4,8 @@ using FF_ModelsDB.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using FF.Architecture.Parsers;
 
 namespace FF_Api.Controllers;
 
@@ -79,6 +81,56 @@ public class CollectionApiController(FF_DbContext context) : ControllerBase
         context.CollectionItems.Add(item);
         await context.SaveChangesAsync();
         return Ok(item);
+    }
+
+    [HttpGet("{id}/items")]
+    public async Task<ActionResult<IEnumerable<NewsItemDto>>> GetItems(int id)
+    {
+        var userId = GetUserId();
+        if (userId is null) return Unauthorized();
+
+        var collection = await context.Collections
+            .SingleOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+        if (collection is null) return NotFound();
+
+        var items = await context.CollectionItems
+            .Where(ci => ci.CollectionId == id)
+            .Include(ci => ci.SourceItem)
+            .ToListAsync();
+
+        var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        var news = items
+            .Where(ci => !string.IsNullOrWhiteSpace(ci.SourceItem.Json))
+            .Select(ci => new { ci.SourceItemId, News = JsonSerializer.Deserialize<NewsItemDto>(ci.SourceItem.Json!, jsonOptions) })
+            .Where(x => x.News is not null)
+            .Select(x =>
+            {
+                x.News!.SourceItemId = x.SourceItemId;
+                return x.News;
+            })
+            .ToList();
+
+        return Ok(news);
+    }
+
+    [HttpPost("{id}/removeItem")]
+    public async Task<IActionResult> RemoveItem(int id, [FromForm] int sourceItemId)
+    {
+        var userId = GetUserId();
+        if (userId is null) return Unauthorized();
+
+        var collection = await context.Collections
+            .SingleOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+        if (collection is null) return NotFound();
+
+        var item = await context.CollectionItems
+            .SingleOrDefaultAsync(ci => ci.CollectionId == id && ci.SourceItemId == sourceItemId);
+        if (item is null) return NotFound();
+
+        context.CollectionItems.Remove(item);
+        await context.SaveChangesAsync();
+        return NoContent();
     }
 
     private int? GetUserId() => int.TryParse(User.FindFirstValue("id"), out var id) ? id : null;

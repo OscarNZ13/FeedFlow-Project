@@ -12,24 +12,6 @@ public class FavoriteController(IHttpClientFactory httpClientFactory) : Controll
 {
     private const string ApiBaseUrl = "https://localhost:7283/FavoriteApi";
 
-    /*
-    public async Task<IActionResult> Index()
-    {
-        var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync(ApiBaseUrl);
-        if (!response.IsSuccessStatusCode)
-        {
-            TempData["Error"] = "No fue posible cargar los favoritos.";
-            return View(Enumerable.Empty<NewsItemDto>());
-        }
-
-        var items = JsonSerializer.Deserialize<IEnumerable<NewsItemDto>>(
-            await response.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? [];
-        return View(items);
-    }
-    */
-
     public async Task<IActionResult> Index()
     {
         var client = CreateAuthenticatedClient();
@@ -44,48 +26,44 @@ public class FavoriteController(IHttpClientFactory httpClientFactory) : Controll
         return View(items);
     }
 
-
-    /*
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Add(int sourceItemId)
-    {
-        var response = await CreateAuthenticatedClient().PostAsync($"{ApiBaseUrl}/{sourceItemId}", null);
-        TempData[response.IsSuccessStatusCode ? "Success" : "Error"] = response.IsSuccessStatusCode
-            ? "Noticia agregada a favoritos."
-            : "No fue posible agregar la noticia a favoritos.";
-        return RedirectToAction("Index", "Feed");
-    }*/
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(int sourceItemId, int[]? collectionIds)
     {
         var client = CreateAuthenticatedClient();
+        bool success;
 
-        // Siempre guardar en favoritos
-        var response = await client.PostAsync($"{ApiBaseUrl}/{sourceItemId}", null);
-
-        // Si el usuario seleccionó colecciones, guardar también en ellas
-        if (response.IsSuccessStatusCode && collectionIds != null && collectionIds.Any())
+        if (collectionIds != null && collectionIds.Any())
         {
+            // El usuario eligió colección(es): se guarda solo ahí, no en favoritos.
+            success = true;
             foreach (var collectionId in collectionIds)
             {
                 var content = new FormUrlEncodedContent(new[]
                 {
                 new KeyValuePair<string,string>("sourceItemId", sourceItemId.ToString())
             });
-                await client.PostAsync($"https://localhost:7283/CollectionApi/{collectionId}/addItem", content);
+                var collectionResponse = await client.PostAsync($"https://localhost:7283/CollectionApi/{collectionId}/addItem", content);
+                success &= collectionResponse.IsSuccessStatusCode;
             }
-        }
 
-        TempData[response.IsSuccessStatusCode ? "Success" : "Error"] = response.IsSuccessStatusCode
-            ? "Noticia agregada a favoritos."
-            : "No fue posible agregar la noticia a favoritos.";
+            TempData[success ? "Success" : "Error"] = success
+                ? "Noticia guardada en la(s) colección(es) seleccionada(s)."
+                : "No fue posible guardar la noticia en alguna colección.";
+        }
+        else
+        {
+            // Sin colecciones seleccionadas: se guarda en favoritos (comportamiento original).
+            var response = await client.PostAsync($"{ApiBaseUrl}/{sourceItemId}", null);
+            success = response.IsSuccessStatusCode;
+
+            TempData[success ? "Success" : "Error"] = success
+                ? "Noticia agregada a favoritos."
+                : "No fue posible agregar la noticia a favoritos.";
+        }
 
         return RedirectToAction("Index", "Feed");
     }
-
 
 
     [HttpPost]

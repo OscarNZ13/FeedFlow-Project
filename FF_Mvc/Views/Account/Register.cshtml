@@ -48,6 +48,13 @@
             <input class="ff-input" asp-for="Password" type="password" placeholder="••••••••" id="passwordInput" />
             <span class="ff-eye" onclick="togglePassword()">👁</span>
         </div>
+        <div class="ff-hint">
+            Tu contraseña debe cumplir con:
+            <ul>
+                <li id="hintLength">Mínimo 8 caracteres</li>
+                <li id="hintLetter">Al menos una letra</li>
+            </ul>
+        </div>
 
         <button class="ff-btn" type="submit">Registrarse</button>
     </form>
@@ -61,6 +68,19 @@
         const input = document.getElementById('passwordInput');
         input.type = input.type === 'password' ? 'text' : 'password';
     }
+
+    // Solo indicador visual para el usuario mientras escribe.
+    // La validación real sigue viviendo en RegisterViewModel / servidor.
+    document.getElementById('passwordInput').addEventListener('input', function () {
+        const value = this.value;
+
+        const hintLength = document.getElementById('hintLength');
+        hintLength.classList.toggle('ff-hint-ok', value.length >= 8);
+
+        const hintLetter = document.getElementById('hintLetter');
+        hintLetter.classList.toggle('ff-hint-ok', /[a-zA-Z]/.test(value));
+    });
 </script>
 </body>
 </html>
+

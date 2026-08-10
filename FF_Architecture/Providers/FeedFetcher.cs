@@ -56,7 +56,7 @@ public class FeedFetcher : IFeedFetcher
         }
         catch (ApplicationException)
         {
-            throw; // ya trae el mensaje bueno, no lo envolvemos de nuevo
+            throw; 
         }
         catch (Exception ex)
         {

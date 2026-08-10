@@ -26,11 +26,17 @@ public partial class FF_DbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Favorite> Favorites { get; set; }
+
+    public virtual DbSet<Collection> Collections { get; set; }
+    public virtual DbSet<CollectionItem> CollectionItems { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("Server=ALISSON\\SQLEXPRESS01;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=LAPTOP-QIN0I11O\\SQLEXPRESS;Database=FeedFlowDB;Trusted_Connection=True;TrustServerCertificate=True;");
         }
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -110,6 +116,47 @@ public partial class FF_DbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Roles");
         });
+
+        modelBuilder.Entity<Favorite>(entity =>
+        {
+            entity.ToTable("Favorites");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.UserId, e.SourceItemId }).IsUnique();
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.LastFavoriteAt).HasColumnType("datetime");
+
+            entity.HasOne(e => e.User).WithMany(u => u.Favorites)
+                .HasForeignKey(e => e.UserId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.SourceItem).WithMany(i => i.Favorites)
+                .HasForeignKey(e => e.SourceItemId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Collection>(entity =>
+        {
+            entity.ToTable("Collections");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+
+        });
+
+        modelBuilder.Entity<CollectionItem>(entity =>
+        {
+            entity.ToTable("CollectionItems");
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Collection)
+                  .WithMany(c => c.Items)
+                  .HasForeignKey(e => e.CollectionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.SourceItem)
+                  .WithMany()
+                  .HasForeignKey(e => e.SourceItemId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

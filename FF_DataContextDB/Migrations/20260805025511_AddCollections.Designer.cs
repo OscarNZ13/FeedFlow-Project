@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FF_DataDB.Migrations
 {
     [DbContext(typeof(FF_DbContext))]
-    [Migration("20260722063157_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260805025511_AddCollections")]
+    partial class AddCollections
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,85 @@ namespace FF_DataDB.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("FF_ModelsDB.Models.Collection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Collections", (string)null);
+                });
+
+            modelBuilder.Entity("FF_ModelsDB.Models.CollectionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CollectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SourceItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("SourceItemId");
+
+                    b.ToTable("CollectionItems", (string)null);
+                });
+
+            modelBuilder.Entity("FF_ModelsDB.Models.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("LastFavoriteAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("SourceItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SourceSecretId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceItemId");
+
+                    b.HasIndex("SourceSecretId");
+
+                    b.HasIndex("UserId", "SourceItemId")
+                        .IsUnique();
+
+                    b.ToTable("Favorites", (string)null);
+                });
 
             modelBuilder.Entity("FF_ModelsDB.Models.Role", b =>
                 {
@@ -195,6 +274,48 @@ namespace FF_DataDB.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("FF_ModelsDB.Models.CollectionItem", b =>
+                {
+                    b.HasOne("FF_ModelsDB.Models.Collection", "Collection")
+                        .WithMany("Items")
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FF_ModelsDB.Models.SourceItem", "SourceItem")
+                        .WithMany()
+                        .HasForeignKey("SourceItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("SourceItem");
+                });
+
+            modelBuilder.Entity("FF_ModelsDB.Models.Favorite", b =>
+                {
+                    b.HasOne("FF_ModelsDB.Models.SourceItem", "SourceItem")
+                        .WithMany("Favorites")
+                        .HasForeignKey("SourceItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FF_ModelsDB.Models.SourceSecret", null)
+                        .WithMany("Favorites")
+                        .HasForeignKey("SourceSecretId");
+
+                    b.HasOne("FF_ModelsDB.Models.User", "User")
+                        .WithMany("Favorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SourceItem");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FF_ModelsDB.Models.SourceItem", b =>
                 {
                     b.HasOne("FF_ModelsDB.Models.Source", "Source")
@@ -227,6 +348,11 @@ namespace FF_DataDB.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("FF_ModelsDB.Models.Collection", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("FF_ModelsDB.Models.Role", b =>
                 {
                     b.Navigation("Users");
@@ -237,6 +363,21 @@ namespace FF_DataDB.Migrations
                     b.Navigation("Secrets");
 
                     b.Navigation("SourceItems");
+                });
+
+            modelBuilder.Entity("FF_ModelsDB.Models.SourceItem", b =>
+                {
+                    b.Navigation("Favorites");
+                });
+
+            modelBuilder.Entity("FF_ModelsDB.Models.SourceSecret", b =>
+                {
+                    b.Navigation("Favorites");
+                });
+
+            modelBuilder.Entity("FF_ModelsDB.Models.User", b =>
+                {
+                    b.Navigation("Favorites");
                 });
 #pragma warning restore 612, 618
         }

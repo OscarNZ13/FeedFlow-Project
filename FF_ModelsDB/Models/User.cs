@@ -18,4 +18,8 @@ public partial class User
     public DateTime? CreatedAt { get; set; }
 
     public virtual Role Role { get; set; } = null!;
+
+    public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
+   
 }

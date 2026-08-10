@@ -1,24 +1,27 @@
-﻿@model FF_Mvc.ViewModels.UserViewModel
+﻿@model FF_ModelsDB.Models.Collection
+
 @{
-    ViewData["Title"] = "Eliminar Usuario";
+    ViewData["Title"] = "Eliminar Colección";
 }
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
 
 <div class="ff-card">
     <div class="ff-masthead">
         <div class="ff-masthead-title">FeedFlow</div>
-        <div class="ff-masthead-sub">Administración de usuarios</div>
+        <div class="ff-masthead-sub">Administración de colecciones</div>
     </div>
 
     <div class="ff-divider">
         <div class="ff-divider-line"></div>
-        <div class="ff-divider-text">Eliminar Usuario</div>
+        <div class="ff-divider-text">Eliminar Colección</div>
         <div class="ff-divider-line"></div>
     </div>
 
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="ff-alert ff-alert-warning text-center">
-        ¿Está seguro que desea eliminar al usuario <strong>@Model.Username</strong>?
+        ¿Está seguro que desea eliminar la colección <strong>@Model.Name</strong>?
     </div>
 
     <dl class="row ff-dl">
@@ -26,20 +29,18 @@
         <dd class="col-sm-10 ff-text">@Model.Id</dd>
 
         <dt class="col-sm-2 ff-label">Nombre</dt>
-        <dd class="col-sm-10 ff-text">@Model.Username</dd>
-
-        <dt class="col-sm-2 ff-label">Correo</dt>
-        <dd class="col-sm-10 ff-text">@Model.Email</dd>
+        <dd class="col-sm-10 ff-text">@Model.Name</dd>
     </dl>
 
-    <form asp-action="DeleteConfirmed" method="post">
-        <input type="hidden" asp-for="Id" />
+    <form asp-action="DeleteConfirmed" method="post" class="ff-form">
+        <input type="hidden" name="id" value="@Model.Id" />
 
-        
-        <div class="form-actions">
+        <div class="ff-form-actions text-center">
             <button type="submit" class="ff-btn ff-btn-danger">Eliminar</button>
             <a asp-action="Index" class="ff-btn ff-btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>
+
+
 

@@ -1,0 +1,44 @@
+﻿@model FF_ModelsDB.Models.Collection
+
+@{
+    ViewData["Title"] = "Renombrar Colección";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="ff-card">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Administración de colecciones</div>
+    </div>
+
+    <div class="ff-divider">
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Renombrar Colección</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    <form asp-action="RenameConfirmed" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label for="newName" class="ff-label">Nuevo nombre</label>
+            <input type="text" id="newName" name="newName" value="@Model.Name" class="form-control" required />
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="ff-btn ff-btn-warning">Renombrar</button>
+            <a asp-action="Index" class="ff-btn ff-btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

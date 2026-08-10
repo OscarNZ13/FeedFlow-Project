@@ -1,17 +1,43 @@
+using FF.Architecture.Parsers;
+using FF_ModelsDB.Models;
 using FF_Mvc.Service;
+using FF_Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace FF_Mvc.Controllers;
 
-public class FeedController(IFeedService feedService) : Controller
+public class FeedController(IFeedService feedService, IHttpClientFactory httpClientFactory) : Controller
 {
+
+
+    private HttpClient CreateAuthenticatedClient()
+    {
+        var client = httpClientFactory.CreateClient();
+        var token = HttpContext.Session.GetString("JwtToken");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return client;
+    }
+
     public async Task<IActionResult> Index()
     {
+        
         var items = (await feedService.GetFeedAsync(50)).ToList();
         ViewBag.Total = items.Count;
 
+        // Las colecciones del usuario
+        var client = CreateAuthenticatedClient();
+        var collectionsResponse = await client.GetAsync("https://localhost:7283/CollectionApi");
+        ViewBag.Collections = collectionsResponse.IsSuccessStatusCode
+            ? JsonSerializer.Deserialize<IEnumerable<Collection>>(await collectionsResponse.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? []
+            : Enumerable.Empty<Collection>();
+
         return View(items);
     }
+
+
 
     public IActionResult Download(int id)
     {
@@ -54,5 +80,104 @@ public class FeedController(IFeedService feedService) : Controller
 
         TempData["Error"] = result.Message;
         return View();
+    }
+
+    private bool IsAdmin()
+    {
+        var roleIdClaim = User.FindFirst("roleId");
+        return roleIdClaim != null && roleIdClaim.Value == "1";
+    }
+
+    public async Task<IActionResult> Sources()
+    {
+        if (!IsAdmin())
+        {
+            TempData["Error"] = "Solo un administrador puede ver las fuentes.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var sources = await feedService.GetSourcesAsync();
+        return View(sources);
+    }
+
+    public IActionResult AddSource()
+    {
+        if (!IsAdmin())
+        {
+            TempData["Error"] = "Solo un administrador puede agregar fuentes.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(new SourceFormViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddSource(SourceFormViewModel form)
+    {
+        if (!IsAdmin())
+        {
+            TempData["Error"] = "Solo un administrador puede agregar fuentes.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (!ModelState.IsValid)
+            return View(form);
+
+        var created = await feedService.CreateSourceAsync(form);
+        if (created is null)
+        {
+            ModelState.AddModelError(string.Empty, "No se pudo crear la fuente. Intenta de nuevo.");
+            return View(form);
+        }
+
+        TempData["Success"] = $"Fuente \"{created.Name}\" agregada correctamente.";
+        return RedirectToAction(nameof(Sources));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RefreshSource(int id)
+    {
+        if (!IsAdmin())
+        {
+            TempData["Error"] = "Solo un administrador puede refrescar fuentes.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        try
+        {
+            var items = await feedService.RefreshSourceAsync(id);
+            TempData["Success"] = $"Se procesaron {items.Count()} items de la fuente.";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"No se pudo refrescar la fuente: {ex.Message}";
+        }
+
+        return RedirectToAction(nameof(Sources));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteSource(int id)
+    {
+        if (!IsAdmin())
+        {
+            TempData["Error"] = "Solo un administrador puede eliminar fuentes.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var (success, error) = await feedService.DeleteSourceAsync(id);
+        if (success)
+        {
+            TempData["Success"] = "Fuente eliminada correctamente.";
+        }
+        else
+        {
+            TempData["Error"] = $"No se pudo eliminar la fuente: {error}";
+        }
+
+        return RedirectToAction(nameof(Sources));
     }
 }

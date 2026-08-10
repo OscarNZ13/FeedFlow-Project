@@ -14,4 +14,6 @@ public partial class SourceItem
     public DateTime? CreatedAt { get; set; }
 
     public virtual Source? Source { get; set; }
+
+    public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 }

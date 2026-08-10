@@ -14,7 +14,7 @@ public interface IUserBusiness
 {
     Task<bool> RegisterAsync(string username, string email, string password);
     Task<string?> LoginAsync(string email, string password);
-    //Para crear, editar, editar contraseña (admin) y eliminar usuarios (admin)
+    
     Task<bool> CreateUserAsync(string username, string email, string password);
 
     Task<bool> CreateAsync(string username, string email, string password, int roleId);
@@ -22,7 +22,7 @@ public interface IUserBusiness
     Task<bool> UpdateUserInfoAsync(int id, string username, string email);
     Task<bool> UpdatePasswordAsync(int id, string newPassword);
     Task<bool> DeleteUserAsync(int id);
-    //Lisatado
+    //Listado
     Task<List<User>> GetAllAsync();
     //Get por id
     Task<User?> GetByIdAsync(int id);

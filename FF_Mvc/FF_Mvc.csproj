@@ -26,10 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FF_DataContextDB\FF_DataDB.csproj" />
     <ProjectReference Include="..\FF_ModelsDB\FF_ModelsDB.csproj" />
   </ItemGroup>
 
-  <!-- NUEVO: para poder usar IRestProvider/JsonProvider y NewsItemDto en el FeedService -->
   <ItemGroup>
     <ProjectReference Include="..\FF_Architecture\FF.Architecture.csproj" />
   </ItemGroup>

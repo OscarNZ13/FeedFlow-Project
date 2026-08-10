@@ -21,4 +21,6 @@ public partial class SourceSecret
     public SecretLocation Location { get; set; } = SecretLocation.Header;
 
     public virtual Source? Source { get; set; }
+
+    public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 }

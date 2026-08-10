@@ -38,15 +38,22 @@
 
     <form asp-action="Register" method="post">
         <label class="ff-label" asp-for="Username">Usuario</label>
-        <input class="ff-input" asp-for="Username" type="text" placeholder="tunombre" />
+        <input class="ff-input" asp-for="Username" type="text" placeholder="" />
 
         <label class="ff-label" asp-for="Email">Email</label>
-        <input class="ff-input" asp-for="Email" type="email" placeholder="tucorreo@email.com" />
+        <input class="ff-input" asp-for="Email" type="email" placeholder="" />
 
         <label class="ff-label" asp-for="Password">Contraseña</label>
         <div class="ff-input-wrapper">
-            <input class="ff-input" asp-for="Password" type="password" placeholder="••••••••" id="passwordInput" />
+            <input class="ff-input" asp-for="Password" type="password" placeholder="" id="passwordInput" />
             <span class="ff-eye" onclick="togglePassword()">👁</span>
+        </div>
+        <div class="ff-hint">
+            Tu contraseña debe cumplir con:
+            <ul>
+                <li id="hintLength">Mínimo 8 caracteres</li>
+                <li id="hintLetter">Al menos una letra</li>
+            </ul>
         </div>
 
         <button class="ff-btn" type="submit">Registrarse</button>
@@ -61,6 +68,18 @@
         const input = document.getElementById('passwordInput');
         input.type = input.type === 'password' ? 'text' : 'password';
     }
+
+    
+    document.getElementById('passwordInput').addEventListener('input', function () {
+        const value = this.value;
+
+        const hintLength = document.getElementById('hintLength');
+        hintLength.classList.toggle('ff-hint-ok', value.length >= 8);
+
+        const hintLetter = document.getElementById('hintLetter');
+        hintLetter.classList.toggle('ff-hint-ok', /[a-zA-Z]/.test(value));
+    });
 </script>
 </body>
 </html>
+

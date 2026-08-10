@@ -1,0 +1,44 @@
+﻿@model IEnumerable<FF_ModelsDB.Models.Collection>
+@{
+    ViewData["Title"] = "Mis Colecciones";
+}
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="ff-card">
+    <div class="ff-masthead">
+        <div class="ff-masthead-title">FeedFlow</div>
+        <div class="ff-masthead-sub">Administración de colecciones</div>
+    </div>
+
+    <div class="ff-divider">
+        <div class="ff-divider-line"></div>
+        <div class="ff-divider-text">Listado de colecciones</div>
+        <div class="ff-divider-line"></div>
+    </div>
+
+    <a asp-action="Create" class="ff-btn">Nueva colección</a>
+
+    <table class="ff-table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var collection in Model)
+            {
+                <tr>
+                    <td>@collection.Name</td>
+                    <td>
+                        <a asp-action="ViewCollection" asp-route-id="@collection.Id" class="ff-btn">Ver</a>
+                        <a asp-action="RenameCollection" asp-route-id="@collection.Id" class="ff-btn">Renombrar</a>
+                        <a asp-action="DeleteCollection" asp-route-id="@collection.Id" class="ff-btn ff-btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -4,6 +4,7 @@ using FF_DataDB.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FF_DataDB.Migrations
 {
     [DbContext(typeof(FF_DbContext))]
-    partial class FF_DbContextModelSnapshot : ModelSnapshot
+    [Migration("20260804023257_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,50 +24,6 @@ namespace FF_DataDB.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("FF_ModelsDB.Models.Collection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Collections", (string)null);
-                });
-
-            modelBuilder.Entity("FF_ModelsDB.Models.CollectionItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CollectionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SourceItemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CollectionId");
-
-                    b.HasIndex("SourceItemId");
-
-                    b.ToTable("CollectionItems", (string)null);
-                });
 
             modelBuilder.Entity("FF_ModelsDB.Models.Favorite", b =>
                 {
@@ -271,25 +230,6 @@ namespace FF_DataDB.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("FF_ModelsDB.Models.CollectionItem", b =>
-                {
-                    b.HasOne("FF_ModelsDB.Models.Collection", "Collection")
-                        .WithMany("Items")
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FF_ModelsDB.Models.SourceItem", "SourceItem")
-                        .WithMany()
-                        .HasForeignKey("SourceItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Collection");
-
-                    b.Navigation("SourceItem");
-                });
-
             modelBuilder.Entity("FF_ModelsDB.Models.Favorite", b =>
                 {
                     b.HasOne("FF_ModelsDB.Models.SourceItem", "SourceItem")
@@ -343,11 +283,6 @@ namespace FF_DataDB.Migrations
                         .HasConstraintName("FK_Users_Roles");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("FF_ModelsDB.Models.Collection", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("FF_ModelsDB.Models.Role", b =>
